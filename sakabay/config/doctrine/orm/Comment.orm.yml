@@ -12,18 +12,28 @@ App\Domain\Model\Comment:
             options:
                 comment: Identifiant technique d'un commentaire/avis
     fields:
+        title:
+            type: string
+            length: 100
+            column: title
+            nullable: false
         message:
             type: string
-            length: 191
+            length: 1000
             column: message
-            nullable: true
+            nullable: false
         note:
-            type: decimal
-            precision: 2
-            scale: 1
+            type: integer
+            length: 1
             column: note
             nullable: false
-
+        dtCreated:
+            type: datetime
+            gedmo:
+                timestampable:
+                    on: create
+            options:
+                default: CURRENT_TIMESTAMP
     manyToOne:
         company:
             targetEntity: Company

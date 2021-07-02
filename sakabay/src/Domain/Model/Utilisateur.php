@@ -98,7 +98,8 @@ class Utilisateur implements UserInterface, EquatableInterface, NotifiableInterf
      * "api_utilisateurs",
      * "api_groups",
      * "api_admin_companies",
-     * "api_dashboard_utilisateur"
+     * "api_dashboard_utilisateur",
+     * "api_comments"
      * })
      */
     private $username;
@@ -132,7 +133,9 @@ class Utilisateur implements UserInterface, EquatableInterface, NotifiableInterf
      * @Groups({
      * "api_utilisateurs",
      * "api_groups",
-     * "api_dashboard_utilisateur"
+     * "api_dashboard_utilisateur",
+     * "api_admin_companies",
+     * "api_comments"
      * })
      */
     private $imageProfil;

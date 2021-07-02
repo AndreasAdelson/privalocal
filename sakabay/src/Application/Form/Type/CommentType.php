@@ -20,12 +20,21 @@ class CommentType extends AbstractType
         $translator = $options['translator'];
 
         $builder
+            ->add('title', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => $translator->trans('error_message_field_not_empty')
+                    ]),
+                    new Length(['max' => 100]),
+                ],
+                'required' => true,
+            ])
             ->add('message', TextType::class, [
                 'constraints' => [
                     new NotBlank([
                         'message' => $translator->trans('error_message_field_not_empty')
                     ]),
-                    new Length(['max' => 191]),
+                    new Length(['max' => 1000]),
                 ],
                 'required' => true,
             ])
@@ -46,10 +55,13 @@ class CommentType extends AbstractType
                     ]),
                 ],
                 'required' => true,
-            ])
-            ->add('besoin', EntityType::class, [
-                'class' => 'App:Besoin',
-                'required' => false,
+            ])->add('utilisateur', EntityType::class, [
+                'class' => 'App:Utilisateur',
+                'constraints' => [
+                    new NotNull([
+                        'message' => $translator->trans('error_message_field_not_empty'),
+                    ])
+                ]
             ]);
     }
 

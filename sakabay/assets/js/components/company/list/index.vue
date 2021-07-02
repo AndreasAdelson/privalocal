@@ -82,7 +82,7 @@
                         :icon="['fas', 'inbox']"
                       />
                       <span class="bold">{{ $t('company.card.label.statut') }}</span>
-                      <!-- TODO rajouter modale d'info sur le traitement des inscriptions. -->
+                      <!-- TODO rajouter tooltip d'info sur le traitement des inscriptions. -->
                       <span class="link fontSize10 cursor-pointer">{{ $t('commons.more_details') }}</span>
                     </div>
                   </div>

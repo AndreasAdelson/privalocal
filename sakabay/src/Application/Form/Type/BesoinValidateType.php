@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Valid;
 use App\Application\Form\Type\CommentValidateType;
+use Symfony\Component\Validator\Constraints\All;
 
 class BesoinValidateType extends AbstractType
 {
@@ -38,12 +39,6 @@ class BesoinValidateType extends AbstractType
                     ]),
                 ],
                 'required' => true
-            ])
-            ->add('comment', CommentValidateType::class, [
-                'translator' => $translator,
-                'required' => false,
-                'by_reference' => true,
-                'constraints' => [new Valid()]
             ]);
     }
 

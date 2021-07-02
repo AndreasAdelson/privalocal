@@ -174,6 +174,10 @@ const CnsRenderUtils = {
       return moment(date, 'DD/MM/YYYY H:m:ss').format('DD/MM/YYYY H:mm');
     };
 
+    Vue.prototype.$getDateLabelForComments = function(date) {
+      return moment(date, 'DD/MM/YYYY H:m:ss').format('LL');
+    };
+
     Vue.prototype.$capitalise = function(text) {
       if (typeof text !== 'string') {
         console.log('not a string');

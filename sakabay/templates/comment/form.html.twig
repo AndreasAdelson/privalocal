@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+{{ 'comment_title_create_page'|trans }}
+{% endblock %}
+
+{% block body %}
+ <form-comment
+  :utilisateur-id="{{ utilisateurId }}"
+  url-precedente="{{ urlPrecedente }}"
+  :company-id="{{ companyId }}">
+ </form-comment>
+{% endblock %}

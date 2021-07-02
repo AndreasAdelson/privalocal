@@ -28,7 +28,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.fields.name') }} <span class="red">*</span></label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.fields.name') }} <span class="red">*</span></label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -52,7 +52,7 @@
                   id="numSiret"
                   class="numSiret"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.fields.num_siret') }} <span class="red">*</span></label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.fields.num_siret') }} <span class="red">*</span></label>
                   <input
                     v-model="formFields.numSiret"
                     v-validate="'required'"
@@ -64,7 +64,7 @@
                   >
                   <div
                     v-for="errorText in formErrors.numSiret"
-                    :key="'code_' + errorText"
+                    :key="'numSiret_' + errorText"
                   >
                     <span class="fontUbuntuItalic fontSize13 red-skb">{{ errorText }}</span>
                   </div>
@@ -80,7 +80,7 @@
                   id="email"
                   class="email"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.fields.email') }} <span class="red">*</span></label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.fields.email') }} <span class="red">*</span></label>
                   <input
                     v-model="formFields.email"
                     v-validate="'required|email'"
@@ -105,7 +105,7 @@
                 id="category"
                 class="category"
               >
-                <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.category') }} <span class="red">*</span></label>
+                <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.category') }} <span class="red">*</span></label>
 
                 <multiselect
                   v-model="formFields.category"
@@ -135,9 +135,10 @@
                   id="sousCategory"
                   class="sousCategory"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.sous_category') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.sous_category') }} <span class="red">*</span></label>
                   <multiselect
                     v-model="formFields.sousCategorys"
+                    v-validate="'required'"
                     :options="sousCategorys"
                     :disabled="!formFields.category"
                     name="sousCategory"
@@ -168,7 +169,7 @@
                   id="postalAddress"
                   class="postalAddress"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.postal_address') }} <span class="red">*</span></label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.postal_address') }} <span class="red">*</span></label>
                   <input
                     v-model="formFields.address.postalAddress"
                     v-validate="'required'"
@@ -198,7 +199,7 @@
                   id="postalCode"
                   class="postalCode"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.postal_code') }} <span class="red">*</span></label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.postal_code') }} <span class="red">*</span></label>
                   <input
                     v-model="formFields.address.postalCode"
                     v-validate="'required'"
@@ -261,7 +262,7 @@
                 id="city"
                 class="city"
               >
-                <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.city') }} <span class="red">*</span></label>
+                <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.city') }} <span class="red">*</span></label>
                 <autocomplete
                   ref="autocomplete"
                   v-model="formFields.city"
@@ -294,16 +295,9 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.$t('commons.create') }}
+                {{ $t('commons.create') }}
               </button>
             </div>
-            <!-- <div class="col-3">
-              <button
-                type="button"
-                class="btn button_skb fontUbuntuItalic"
-                @click="test()"
-              >Test</button>
-            </div> -->
           </div>
         </div>
       </div>

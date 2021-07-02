@@ -20,21 +20,36 @@ class CommentValidateType extends AbstractType
         $translator = $options['translator'];
 
         $builder
+            ->add('title', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => $translator->trans('error_message_field_not_empty')
+                    ]),
+                    new Length(['max' => 100]),
+                ],
+                'required' => true,
+            ])
             ->add('message', TextType::class, [
                 'constraints' => [
+                    new NotBlank([
+                        'message' => $translator->trans('error_message_field_not_empty')
+                    ]),
                     new Length(['max' => 191]),
                 ],
-                'required' => false,
+                'required' => true,
             ])
             ->add('note', NumberType::class, [
                 'constraints' => [
+                    new NotNull([
+                        'message' => $translator->trans('error_message_field_not_empty')
+                    ]),
                     new Length(['max' => 3]),
                 ],
-                'required' => false,
+                'required' => true,
             ])
             ->add('company', EntityType::class, [
                 'class' => 'App:Company',
-                'required' => false,
+                'required' => true,
             ])
             ->add('besoin', EntityType::class, [
                 'class' => 'App:Besoin',

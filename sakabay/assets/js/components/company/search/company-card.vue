@@ -15,9 +15,33 @@
               class="company-image-2"
             />
             <div class="card-main-info">
-              <div class="row mb-2">
-                <div class="col-12">
+              <div class="row">
+                <div class="col-9">
                   <span class="fontPoppins fontSize20 fontW600">{{ company.name }}</span>
+                </div>
+                <div
+                  v-show="roundedNote && roundedNote != 0"
+                  class="col-3 text-right"
+                >
+                  <span
+                    class="fontAlice fontSize18"
+                  >{{ round(company.note) }}</span>
+                  <v-app
+                    :style="{display: 'inline-block'}"
+                  >
+                    <v-rating
+                      v-if="company.note"
+                      class="readonly"
+                      half-increments
+                      readonly
+                      color="orange"
+                      half-icon="fas fa-star-half-alt"
+                      size="10"
+                      length="5"
+                      :value="company.note"
+                      background-color="grey"
+                    />
+                  </v-app>
                 </div>
               </div>
               <div class="row">
@@ -26,7 +50,7 @@
                     class="orange-login-skb"
                     :icon="['fas', 'map-marker-alt']"
                   />
-                  <span class="fontPoppins fontSize14 fontW600 "> {{ company.city.name }} </span>
+                  <span class="fontPoppins fontSize14 fontW600 ">{{ company.address.postal_address }}, {{ company.city.name }} </span>
                 </div>
               </div>
               <div class="row">
@@ -77,6 +101,19 @@
         isSubscriptionActive: false
       };
     },
+    computed: {
+      roundedNote() {
+        let note = null;
+
+        if (this.company) {
+          note = _.cloneDeep(this.company.note);
+          if (note) {
+            note = this.round(note);
+          }
+        }
+        return note;
+      }
+    },
     created() {
       this.sortSubscriptions();
 
@@ -99,6 +136,9 @@
           }
         }
 
+      },
+      round(note) {
+        return _.round(note, 1);
       }
     },
   };

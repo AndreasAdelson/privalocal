@@ -189,6 +189,9 @@
       "description": "Description",
       "no_subscriptions": "Non abonné"
     },
+    "comment": {
+      "title": "Avis"
+    },
     "card": {
       "label": {
         "category": "Catégorie",
@@ -393,12 +396,14 @@
       "title": "Gestion de la demande de service :",
       "field": {
         "company": "Sélectionnez l'entreprise",
-        "message": "Laissez votre avis",
-        "note": "Notez la prestation"
+        "message": "Votre avis",
+        "note": "Notez la prestation",
+        "title": "Titre de votre avis"
       },
       "placeholder": {
         "besoin_statut": "Sélectionnez une option",
-        "message": "Maximum 1500 caractères"
+        "message": "Maximum 1500 caractères",
+        "title": "Maximum 100 caractères"
       },
       "message": {
         "EXP": "J'ai trouvé une autre solution  que celles qui m'ont été présentées",
@@ -476,6 +481,32 @@
       "dtFin": "Sélectionner une date de fin",
       "subscription_status": "Sélectionner un statut",
       "stripe_id": "Renseignez l'id de l'abonnement stripe"
+    }
+  },
+  "comment": {
+    "dt_created": "Avis écrit le {0}",
+    "write_comment": "Écrire un avis",
+    "no_comments": "Aucun commentaire n'a été réalisé.",
+    "no_result_found": "Aucun commentaire ne semble correspondre à votre recherche, nous vous invitons à modifier vos critères de filtre.",
+    "create": "Commenter",
+    "your_company": "Vous ne pouvez pas réaliser de commentaires pour cette entreprise étant donné qu'elle vous appartient",
+    "fields": {
+      "message": "Votre avis",
+      "note": "Notez la prestation",
+      "title": "Titre de votre avis"
+
+    },
+    "placeholder": {
+      "besoin_statut": "Sélectionnez une option",
+      "message": "Maximum 1000 caractères",
+      "title": "Maximum 100 caractères"
+    },
+    "note": {
+      "excellent": "Excellent",
+      "very_good": "Très bon",
+      "medium": "Moyen",
+      "low": "Médiocre",
+      "horrible": "Horrible"
     }
   },
   "error_message_required": "Ce champ est obligatoire. Merci de bien vouloir le renseigner.",

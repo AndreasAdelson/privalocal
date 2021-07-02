@@ -5,6 +5,9 @@ namespace App\Application\Service;
 use App\Domain\Model\Comment;
 use App\Infrastructure\Repository\CommentRepositoryInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use LogicException;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CommentService
@@ -65,5 +68,66 @@ class CommentService
     ) {
         return $this->commentRepository
             ->getPaginatedList($sortBy, $descending, $filterFields, $filterText, $currentPage, $perPage);
+    }
+
+    /**
+     * Retourne une page, potentiellement triée et filtrée.
+     *
+     *
+     * @param string $sortBy
+     * @param bool   $descending
+     * @param string $filterFields
+     * @param string $filterText
+     * @param int    $currentPage
+     * @param int    $perPage
+     *
+     * @return Pagerfanta
+     */
+    public function getPaginatedListUser(
+        $sortBy = 'note',
+        $descending = true,
+        $filterFields = '',
+        $filterText = '',
+        $company = '',
+        $note = [],
+        $currentPage = 1,
+        $perPage = PHP_INT_MAX ? PHP_INT_MAX : 10
+    ) {
+        $comments = $this->commentRepository
+            ->getPaginatedListUser($sortBy, $descending, $filterFields, $filterText, $company, $note);
+
+        return $this->paginateArray($comments, $perPage, $currentPage);
+    }
+
+    /**
+     * Retourne une page en fonction d'une requète, d'une taille et d'une position.
+     *
+
+     *
+     * @param int $perPage
+     * @param int $currentPage
+     *
+     * @throws LogicException
+     * @return Pagerfanta
+     */
+    public function paginateArray($data, $perPage, $currentPage)
+    {
+        $perPage = (int) $perPage;
+        if (0 >= $perPage) {
+            throw new \LogicException('$perPage must be greater than 0.');
+        }
+        if (0 >= $currentPage) {
+            throw new \LogicException('$currentPage must be greater than 0.');
+        }
+        $pager = new Pagerfanta(new ArrayAdapter($data));
+        $pager->setMaxPerPage((int) $perPage);
+        $pager->setCurrentPage((int) $currentPage);
+
+        return $pager;
+    }
+
+    public function getNbResultsByNote($company = '', $note = '')
+    {
+        return $this->commentRepository->getNbResultsByNote($company, $note);
     }
 }

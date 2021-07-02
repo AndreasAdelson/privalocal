@@ -87,7 +87,7 @@ class WebhookStripeController extends AbstractController
                             $subject = $this->translator->trans('email_renewal_subscription_subject');
                             $bodyMessage = sprintf(
                                 $this->translator->trans('email_renewal_subscription_body'),
-                                $companySubscription->getDtFin()->format('d/m/Y H:i'),
+                                $companySubscription->getDtFin()->format('d/m/Y \à H:i'),
                             );
                             $this->sendMail($companyEmail, $subject, $bodyMessage);
                         } else {
@@ -96,7 +96,7 @@ class WebhookStripeController extends AbstractController
                             $subject = $this->translator->trans('email_first_subscription_subject');
                             $bodyMessage = sprintf(
                                 $this->translator->trans('email_first_subscription_body'),
-                                $companySubscription->getDtFin()->format('d/m/Y H:i')
+                                $companySubscription->getDtFin()->format('d/m/Y \à H:i')
                             );
                             $this->sendMail($companyEmail, $subject, $bodyMessage);
                         }

@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Factory;
 
 use App\Domain\Model\Answer;
+use App\Domain\Model\Comment;
 use App\Domain\Model\Company;
 use App\Domain\Model\CompanySubscription;
 use App\Domain\Notification\Model\Notification;
@@ -153,7 +154,7 @@ class NotificationFactory
         $subject = $this->translator->trans('trial_period_company_subscription_subject');
         $message = sprintf(
             $this->translator->trans('trial_period_company_subscription_message'),
-            $companySubscription->getDtFin()->format('d/m/Y H:i')
+            $companySubscription->getDtFin()->format('d/m/Y \à H:i')
         );
 
         $this->addNotification($destinataires, $subject, $message, $redirect);

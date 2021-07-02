@@ -1,5 +1,6 @@
 var Encore = require('@symfony/webpack-encore');
 var dotenv = require('dotenv');
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
@@ -37,6 +38,7 @@ Encore
   .addStyleEntry('css/main', './assets/scss/main.scss')
   .addStyleEntry('css/app', './assets/css/app.css')
   .enableSassLoader()
+  .addPlugin(new VuetifyLoaderPlugin())
   //.addStyleEntry('css/main', './assets/scss/main.scss')
 
   ////images
@@ -85,7 +87,6 @@ Encore
 //.enableIntegrityHashes(Encore.isProduction())
 ;
 var config = Encore.getWebpackConfig();
-
 config.resolve.extensions.push('.json');
 config.resolve.modules = ['assets/js', 'node_modules'];
 module.exports = config;

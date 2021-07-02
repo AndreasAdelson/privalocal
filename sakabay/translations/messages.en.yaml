@@ -169,7 +169,7 @@ validatecompany_message_admin: "The company « %s » has been accepted on our pl
 createcompany_subject: "Confirmation of registration"
 createcompany_message: "Your registration for the company « %s » is currently being processed. You will receive an answer within 48 hours."
 validatecompany_subject: "Acceptance of your candidacy"
-validatecompany_message: "Congratulations! Your company « %s » is now part of Sakabay Entrepeneur and we are offering you 2 months of premium membership. Enjoy the Sakabay experience and welcome to you."
+validatecompany_message: "Congratulations! Your company « %s » is now part of Sakabay Entrepeneur and we are offering you 2 months of premium membership. You can now complete the details page of your company Enjoy the Sakabay experience and welcome to you."
 updatepassword_subject: "Confirm password change"
 updatepassword_message: "Your password has been changed successfully. A confirmation email was also sent to you."
 createbesoin_message: "Your « %s » request has been successfully published. We forward it to our partner companies that can meet this need."
@@ -247,3 +247,6 @@ subscription_status_title_list_page: "Subscription status list"
 subscription_status_title_edit_page: "Edit a subscription status "
 subscription_status_title_create_page: "Create a subscription status "
 subscription_status_title_show_page: "Subscription status  detail"
+
+#Comment's pages
+comment_title_create_page: "Write a comment"

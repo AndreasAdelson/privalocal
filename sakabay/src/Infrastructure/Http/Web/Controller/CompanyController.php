@@ -63,10 +63,16 @@ class CompanyController extends AbstractController
         }
         $isSubscriptionActive = $this->companyService->isCompanySubscribtionActive($company);
         $titlePage = $company->getName();
+        if (!empty($this->getUser())) {
+            $utilisateurId = $this->getUser()->getId();
+        } else {
+            $utilisateurId = 0;
+        }
         return $this->render('company/show.html.twig', [
             'companyUrlName' => $slug,
             'titlePage' => $titlePage,
-            'isSubscriptionActive' => $isSubscriptionActive
+            'isSubscriptionActive' => $isSubscriptionActive,
+            'utilisateurId' => $utilisateurId
         ]);
     }
 

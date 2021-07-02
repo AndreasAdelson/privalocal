@@ -52,12 +52,17 @@ const CnsFormUtils = {
         this.formErrors[field] = error;
       }
       let fieldElementHtml = document.getElementsByClassName(field)[0];
-
-      let formElement =
+      let formElementByTagName =
         fieldElementHtml.getElementsByTagName('input')[0] ||
         fieldElementHtml.getElementsByTagName('textarea')[0];
-      if (formElement) {
-        formElement.classList.add('border-danger-skb');
+      if (formElementByTagName) {
+        formElementByTagName.classList.add('border-danger-skb');
+      }
+      let formElementByClassName =
+      fieldElementHtml.getElementsByClassName('vue-rate-it-rating')[0] ||
+      fieldElementHtml.getElementsByClassName('multiselect__tags')[0];
+      if(formElementByClassName) {
+        formElementByClassName.classList.add('border-danger-skb');
       }
     };
 
@@ -109,12 +114,18 @@ const CnsFormUtils = {
       _.set(this.formErrors, field, []);
       let fieldsetElement = document.getElementsByClassName(field)[0];
       if (fieldsetElement) {
-        let formElement =
-          fieldsetElement.getElementsByTagName('input')[0] ||
-          fieldsetElement.getElementsByTagName('textarea')[0];
-        if (formElement) {
-          formElement.classList.remove('border-danger-skb');
-        }
+        let formElementByTagName =
+        fieldsetElement.getElementsByTagName('input')[0] ||
+        fieldsetElement.getElementsByTagName('textarea')[0];
+      if (formElementByTagName) {
+        formElementByTagName.classList.remove('border-danger-skb');
+      }
+      let formElementByClassName =
+      fieldsetElement.getElementsByClassName('vue-rate-it-rating')[0] ||
+      fieldsetElement.getElementsByClassName('multiselect__tags')[0];
+      if(formElementByClassName) {
+        formElementByClassName.classList.remove('border-danger-skb');
+      }
       }
     };
 
@@ -224,6 +235,9 @@ const CnsFormUtils = {
     Vue.prototype.$getFormFieldsData = function(formFields = this.formFields, formData = new FormData()) {
       let transformedFormFields = this.$getTransformedValue(formFields);
       _.forEach(_.keys(transformedFormFields), field => {
+        if (field === 'csrfProtection') {
+          formData.append(this.csrfProtection, transformedFormFields[field]);
+        }
         if (transformedFormFields[field] instanceof Array) {
           transformedFormFields[field].forEach(elem => {
             formData.append(field + '[]', elem);

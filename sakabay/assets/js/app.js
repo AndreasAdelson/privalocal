@@ -95,10 +95,13 @@ import FormSubscriptionStatus from './components/admin/subscription-status/form'
 import ShowSubscriptionStatus from './components/admin/subscription-status/show';
 import ListSubscriptionStatus from './components/admin/subscription-status';
 import FormCompanySubscription from './components/admin/company-subscription/form';
+import FormComment from './components/company/show/comment/form';
 import 'utils/logger';
 import Nl2br from 'vue-nl2br';
 import Raters from 'vue-rate-it';
 import Datepicker from 'vuejs-datepicker';
+import vuetify from './plugins/vuetify';
+import KProgress from 'k-progress';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
@@ -172,15 +175,12 @@ Vue.component('Nl2br', Nl2br);
 // eslint-disable-next-line vue/component-definition-name-casing
 Vue.component('star-rating', Raters.StarRating);
 // eslint-disable-next-line vue/component-definition-name-casing
-Vue.component('heart-rating', Raters.HeartRating);
-// eslint-disable-next-line vue/component-definition-name-casing
-Vue.component('fa-rating', Raters.FaRating);
-// eslint-disable-next-line vue/component-definition-name-casing
-Vue.component('image-rating', Raters.ImageRating);
+Vue.component('k-progress', KProgress);
 
 Vue.config.productionTip = false;
 new Vue({
   el: '#root',
+  vuetify,
   i18n,
   components: {
     AbonnementDetails,
@@ -244,7 +244,8 @@ new Vue({
     ShowSubscriptionStatus,
     FormSubscriptionStatus,
     FormCompanySubscription,
-    Datepicker
+    Datepicker,
+    FormComment
   }
 });
 
@@ -272,3 +273,4 @@ $(document).ready(() => {
       $(e.currentTarget).attr('data-empty', !e.currentTarget.value);
   });
 });
+

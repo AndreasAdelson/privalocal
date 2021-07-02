@@ -4,6 +4,7 @@ namespace App\Infrastructure\Http\Rest\Controller;
 
 use App\Application\Form\Type\CommentType;
 use App\Application\Service\CommentService;
+use App\Application\Service\CompanyService;
 use App\Domain\Model\Comment;
 use App\Infrastructure\Factory\NotificationFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +24,7 @@ final class CommentController extends AbstractFOSRestController
 {
     private $entityManager;
     private $commentService;
+    private $companyService;
     private $translator;
 
     /**
@@ -32,17 +34,19 @@ final class CommentController extends AbstractFOSRestController
         EntityManagerInterface $entityManager,
         CommentService $commentService,
         TranslatorInterface $translator,
-        NotificationFactory $notificationFactory
+        NotificationFactory $notificationFactory,
+        CompanyService $companyService
     ) {
         $this->entityManager = $entityManager;
         $this->translator = $translator;
+        $this->companyService = $companyService;
         $this->commentService = $commentService;
         $this->notificationFactory = $notificationFactory;
     }
 
     /**
      * @Rest\View()
-     * @Rest\Post("/comment")
+     * @Rest\Post("/comments")
      * @param Request $request
      *
      * @return View
@@ -60,15 +64,93 @@ final class CommentController extends AbstractFOSRestController
             return $form;
         }
 
-        //Send notification to user
-        $authorOpportunity = $comment->getBesoin()->getAuthor();
-        $ressourceLocation = $this->generateUrl('service_list');
-        $this->notificationFactory->createCommentNotification([$authorOpportunity], $ressourceLocation, $comment);
-
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
-        return View::create([], Response::HTTP_NO_CONTENT);
+        $companyId = $comment->getCompany()->getId();
+        $this->companyService->updateNotation($companyId);
+
+        $ressourceLocation = $this->generateUrl('company_show', ['slug' => $comment->getCompany()->getUrlName(), 'page' => 'comments']);
+        return View::create([], Response::HTTP_CREATED, ['Location' => $ressourceLocation]);
+    }
+
+    /**
+     * @Rest\View(serializerGroups={"api_comments"})
+     * @Rest\Get("/comments")
+     *
+     * @QueryParam(name="filterFields",
+     *             default="description",
+     *             description="Liste des champs sur lesquels le filtre s'appuie"
+     * )
+     * @QueryParam(name="filter",
+     *             default="",
+     *             description="Filtre"
+     * )
+     * @QueryParam(name="note",
+     *             default="",
+     *             description="Identifiant d'une catégorie"
+     * )
+     * @QueryParam(name="company",
+     *             default="",
+     *             description="Identifiant de l'entreprise"
+     * )
+     * @QueryParam(name="firstAttempt",
+     *             default="true",
+     *             description="Première tentative"
+     * )
+     * @QueryParam(name="sortBy",
+     *             default="message,title",
+     *             description="Champ unique sur lequel s'opère le tri"
+     * )
+     * @QueryParam(name="sortDesc",
+     *             default="false",
+     *             description="Sens du tri"
+     * )
+     * @QueryParam(name="currentPage",
+     *             default="1",
+     *             description="Page courante"
+     * )
+     * @QueryParam(name="perPage",
+     *             default="1000000",
+     *             description="Taille de la page"
+     * )
+     * @return View
+     */
+    public function getComments(ParamFetcher $paramFetcher): View
+    {
+        $filterFields = $paramFetcher->get('filterFields');
+        $filter = $paramFetcher->get('filter');
+        $sortBy = $paramFetcher->get('sortBy');
+        $sortDesc = $paramFetcher->get('sortDesc');
+        $currentPage = $paramFetcher->get('currentPage');
+        $perPage = $paramFetcher->get('perPage');
+        $note = $paramFetcher->get('note');
+        $company = $paramFetcher->get('company');
+        $firstAttempt = $paramFetcher->get('firstAttempt');
+
+
+        $pager = $this->commentService
+            ->getPaginatedListUser($sortBy, 'true' === $sortDesc, $filterFields, $filter, $company, $note, $currentPage, $perPage);
+        $comments = $pager->getCurrentPageResults();
+        $nbResults = $pager->getNbResults();
+
+        $view = $this->view($comments, Response::HTTP_OK);
+        if ($firstAttempt == true) {
+            $noteValues = [
+                [1, "X-Horrible-Count"],
+                [2, "X-Low-Count"],
+                [3, "X-Medium-Count"],
+                [4, "X-Very-Good-Count"],
+                [5, "X-Excellent-Count"]
+            ];
+            foreach ($noteValues as $noteValue) {
+                $numberResults = $this->commentService->getNbResultsByNote($company, $noteValue[0]);
+                $view->setHeader($noteValue[1], $numberResults);
+            }
+        }
+        $view->setHeader('X-Total-Count', (int)$nbResults);
+
+        return $view;
     }
 
     /**
@@ -101,7 +183,7 @@ final class CommentController extends AbstractFOSRestController
      * )
      * @return View
      */
-    public function getComments(ParamFetcher $paramFetcher): View
+    public function getAdminComments(ParamFetcher $paramFetcher): View
     {
         $filterFields = $paramFetcher->get('filterFields');
         $filter = $paramFetcher->get('filter');

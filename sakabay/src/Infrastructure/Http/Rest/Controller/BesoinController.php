@@ -5,9 +5,12 @@ namespace App\Infrastructure\Http\Rest\Controller;
 use App\Application\Form\Type\BesoinExpirateType;
 use App\Application\Form\Type\BesoinType;
 use App\Application\Form\Type\BesoinValidateType;
+use App\Application\Form\Type\CommentValidateType;
 use App\Application\Service\BesoinService;
 use App\Application\Service\BesoinStatutService;
+use App\Application\Service\CompanyService;
 use App\Domain\Model\Besoin;
+use App\Domain\Model\Comment;
 use App\Infrastructure\Factory\NotificationFactory;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +34,7 @@ final class BesoinController extends AbstractFOSRestController
     private $besoinStatutService;
     private $translator;
     private $notificationFactory;
+    private $companyService;
 
 
     /**
@@ -41,13 +45,15 @@ final class BesoinController extends AbstractFOSRestController
         BesoinService $besoinService,
         TranslatorInterface $translator,
         BesoinStatutService $besoinStatutService,
-        NotificationFactory $notificationFactory
+        NotificationFactory $notificationFactory,
+        CompanyService $companyService
     ) {
         $this->entityManager = $entityManager;
         $this->translator = $translator;
         $this->besoinService = $besoinService;
         $this->besoinStatutService = $besoinStatutService;
         $this->notificationFactory = $notificationFactory;
+        $this->companyService = $companyService;
     }
 
     /**
@@ -252,14 +258,34 @@ final class BesoinController extends AbstractFOSRestController
                 'X-Message' => rawurlencode($this->translator->trans('error_publish_besoin')),
             ]);
         }
+        $commentDatas = $request->request->get('comment');
         $formOptions = [
             'translator' => $this->translator,
         ];
+        if (!empty($commentDatas)) {
+            $request->request->remove('comment');
+        }
+
         $form = $this->createForm(BesoinValidateType::class, $besoin, $formOptions);
         $form->submit($request->request->all());
         if (!$form->isValid()) {
             return $form;
         }
+
+        if (!empty($commentDatas)) {
+            $comment = new Comment();
+            $formComment = $this->createForm(CommentValidateType::class, $comment, $formOptions);
+            $formComment->submit($commentDatas);
+            if (!$formComment->isValid()) {
+                return $formComment;
+            }
+            $this->entityManager->persist($comment);
+            $this->entityManager->flush();
+
+            $companyId = $comment->getCompany()->getId();
+            $this->companyService->updateNotation($companyId);
+        }
+
         $this->entityManager->persist($besoin);
         $this->entityManager->flush();
 

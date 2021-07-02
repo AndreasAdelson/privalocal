@@ -78,9 +78,8 @@ class CompanyType extends AbstractType
             ->add('sousCategorys', EntityType::class, [
                 'class' => 'App:SousCategory',
                 'multiple' => true,
-                'required' => false
-            ]);
-            ;
+                'required' => true
+            ]);;
     }
 
     public function configureOptions(OptionsResolver $resolver)

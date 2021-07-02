@@ -189,6 +189,9 @@
       "description": "Description",
       "no_subscriptions": "Not a subscriber"
     },
+    "comment": {
+      "title": "Comments"
+    },
     "card": {
       "label": {
         "category": "Catégorie",
@@ -394,11 +397,13 @@
       "field": {
         "company": "Select company",
         "message": "Leave a comment",
-        "note": "Rate the service"
+        "note": "Rate the service",
+        "title": "Title of your comment"
       },
       "placeholder": {
         "besoin_statut": "Select an option",
-        "message": "Maximum 1500 characters"
+        "message": "Maximum 1500 characters",
+        "title": "Maximum 100 caractères"
       },
       "message": {
         "EXP": "I found a solution other than those presented to me",
@@ -476,6 +481,32 @@
       "dtFin": "Select a end date",
       "subscription_status": "Select a status",
       "stripe_id": "Enter a stripe id"
+    }
+  },
+  "comment": {
+    "dt_created": "Comment written on {0}",
+    "write_comment": "Write a comment",
+    "no_comments": "No comments were made.",
+    "no_result_found": "No comments seem to match your search, we invite you to change your filter criteria.",
+    "create": "Comment",
+    "your_company": "You cannot make comments for this company as you own it",
+    "fields": {
+      "message": "Your comments",
+      "note": "Rate the service",
+      "title": "Title of your comment"
+
+    },
+    "placeholder": {
+      "besoin_statut": "Sélectionnez une option",
+      "message": "Maximum 1000 caractères",
+      "title": "Maximum 100 caractères"
+    },
+    "note": {
+      "excellent": "Excellent",
+      "very_good": "Very good",
+      "medium": "Medium",
+      "low": "Low",
+      "horrible": "Horrible"
     }
   },
   "error_message_required": "This field is mandatory. Thank you for filling it in.",

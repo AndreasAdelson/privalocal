@@ -9,6 +9,7 @@
 @import "~quill/dist/quill.core.css";
 @import "~quill/dist/quill.bubble.css";
 @import "~quill/dist/quill.snow.css";
+@import '~vuetify/src/styles/main.sass';
 /*---------------------------------
     VARIABLES
 -----------------------------------*/
@@ -72,11 +73,9 @@ a:focus {
 // Style title
 
 .navbar {
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_gradient);
   border: none;
   border-radius: 0;
   margin-bottom: 40px;
@@ -471,7 +470,7 @@ a[data-toggle="collapse"] {
   margin-top: 5px;
 }
 
-.foldable-closed > div:not(.clickable) > div.clickable {
+.foldable-closed>div:not(.clickable)>div.clickable {
   background-color: #f2f2f2;
   cursor: pointer;
 }
@@ -517,11 +516,9 @@ a[data-toggle="collapse"] {
 }
 
 .yellow-gradiant {
-  background: linear-gradient(
-    $yellow_light_color,
-    $yellow_login_color,
-    $yellow_light_color
-  );
+  background: linear-gradient($yellow_light_color,
+      $yellow_login_color,
+      $yellow_light_color);
 }
 
 .blue-gradiant {
@@ -529,19 +526,15 @@ a[data-toggle="collapse"] {
 }
 
 .orange-gradiant {
-  background: linear-gradient(
-    $orange_light_color,
-    $orange_login_color,
-    $orange_light_color
-  );
+  background: linear-gradient($orange_light_color,
+      $orange_login_color,
+      $orange_light_color);
 }
 
 .green-gradiant {
-  background: linear-gradient(
-    $green_light_color,
-    $green_color,
-    $green_light_color
-  );
+  background: linear-gradient($green_light_color,
+      $green_color,
+      $green_light_color);
 }
 
 /*---------------------------------
@@ -591,6 +584,10 @@ a[data-toggle="collapse"] {
   color: $grey_icon;
 }
 
+.grey-bold-skb {
+  color: $grey;
+}
+
 .white-skb {
   color: $white_color;
 }
@@ -619,22 +616,18 @@ a[data-toggle="collapse"] {
   color: $yellow_light_color;
   width: 50px;
   height: 50px;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_gradient);
   border-color: transparent;
   border: none !important;
 }
 
 .btn-menu:hover {
   color: $white_color;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_login_color,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_login_color,
+      $yellow_gradient);
   opacity: 1.33;
 }
 
@@ -644,22 +637,18 @@ a[data-toggle="collapse"] {
   color: $yellow_light_color !important;
   width: 50px;
   height: 50px;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_gradient);
   padding-top: 12px;
   border: none !important;
 }
 
 .btn-user:hover {
   color: $white_color;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_login_color,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_login_color,
+      $yellow_gradient);
   opacity: 1.33;
 }
 
@@ -670,10 +659,11 @@ a[data-toggle="collapse"] {
   height: 50px;
   z-index: 1;
   background-color: transparent;
+  color: $black_color !important;
 }
 
 .btn-close:hover {
-  color: $white_color;
+  color: $white_color !important;
 }
 
 .btn-delete {
@@ -701,22 +691,18 @@ a[data-toggle="collapse"] {
   color: $yellow_light_color !important;
   width: 50px;
   height: 50px;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_gradient);
   padding-top: 10px;
   border: none !important;
 }
 
 .btn-connect:hover {
   color: $white_color;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_login_color,
-    $yellow_gradient
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_login_color,
+      $yellow_gradient);
 }
 
 .btn-register {
@@ -792,11 +778,9 @@ a[data-toggle="collapse"] {
   width: 350px;
   margin-top: auto;
   margin-bottom: auto;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_login_color
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_login_color);
   position: relative;
   display: flex;
   justify-content: center;
@@ -940,7 +924,7 @@ a[data-toggle="collapse"] {
   outline: 0px !important;
 }
 
-.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
   background-color: $orange_login_color !important;
 }
 
@@ -952,11 +936,9 @@ a[data-toggle="collapse"] {
   height: 600px;
   margin: 1rem auto;
   width: 500px;
-  background: linear-gradient(
-    $yellow_login_color,
-    $yellow_gradient,
-    $yellow_login_color
-  );
+  background: linear-gradient($yellow_login_color,
+      $yellow_gradient,
+      $yellow_login_color);
   position: relative;
   display: flex;
   justify-content: center;
@@ -968,6 +950,11 @@ a[data-toggle="collapse"] {
   -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 5px;
+}
+
+.reference-card .card-title {
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .brand_logo_container_register {
@@ -995,10 +982,15 @@ a[data-toggle="collapse"] {
   opacity: 0.6 !important;
 }
 
-.form-control,
+.form-control {
+  border-radius: 3px;
+  white-space: normal !important;
+}
+
 .btn {
   border-radius: 3px;
   white-space: normal !important;
+  color: $white_color;
 }
 
 .register-card h2 {
@@ -1121,7 +1113,6 @@ a[data-toggle="collapse"] {
 }
 
 //footer sakabay
-/** code by webdevtrick ( https://webdevtrick.com ) **/
 /*====================
 	Footer
 ====================== */
@@ -1472,7 +1463,7 @@ ul.social-footer2 li a {
 /*---------------------------------
     Autocomplete
 -----------------------------------*/
-.autocomplete-wrapper[disabled="disabled"] > input {
+.autocomplete-wrapper[disabled="disabled"]>input {
   pointer-events: none;
   background-color: #fafafa;
 }
@@ -1595,6 +1586,14 @@ ul.social-footer2 li a {
   padding: 0.5rem;
   border-bottom: 1px solid $grey_light_color;
 }
+
+.readonly .v-icon {
+  cursor: default !important;
+}
+
+// .k-progress-text {
+//   margin-left: 30px !important;
+// }
 
 /*---------------------------------
     Loader style
@@ -1787,21 +1786,15 @@ ul.social-footer2 li a {
 }
 
 .modal-opportunity-centered {
-  top: calc(
-    50% - 12.4rem
-  ); //A modifier en fonction du height final de la modale opportunity
+  top: calc(50% - 12.4rem); //A modifier en fonction du height final de la modale opportunity
 }
 
 .modal-quote-centered {
-  top: calc(
-    50% - 17.4rem
-  ); //A modifier en fonction du height final de la modale quote
+  top: calc(50% - 17.4rem); //A modifier en fonction du height final de la modale quote
 }
 
 .modal-manage-centered {
-  top: calc(
-    50% - 22.4rem
-  ); //A modifier en fonction du height final de la modale quote
+  top: calc(50% - 22.4rem); //A modifier en fonction du height final de la modale quote
 }
 
 .answer-card {

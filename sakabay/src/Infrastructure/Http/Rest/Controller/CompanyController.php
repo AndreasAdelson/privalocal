@@ -189,7 +189,6 @@ final class CompanyController extends AbstractFOSRestController
             ->getPaginatedListUser($sortBy, 'true' === $sortDesc, $filterFields, $filter, $currentPage, $perPage, $codeStatut, $category, $city, $sousCategory);
         $companies = $pager->getCurrentPageResults();
         $nbResults = $pager->getNbResults();
-        // $datas = iterator_to_array($companies);
         $view = $this->view($companies, Response::HTTP_OK);
         $view->setHeader('X-Total-Count', $nbResults);
 
@@ -441,7 +440,7 @@ final class CompanyController extends AbstractFOSRestController
         $bodyMessage = sprintf($this->translator->trans('email_register_validation_body'), $company->getName(), $this->generateUrl('home'));
         $this->sendMail($email, $subject, $bodyMessage);
 
-        $ressourceLocation = $this->generateUrl('company_subscribed_show', ['id' => $companyId], UrlGenerator::RELATIVE_PATH);
+        $ressourceLocation = $this->generateUrl('company_validated_show', ['id' => $companyId], UrlGenerator::RELATIVE_PATH);
 
         //WARNING be sure about who get this notification for production
         $rights = [

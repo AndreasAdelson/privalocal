@@ -7,6 +7,7 @@
     "ext-ctype": "*",
     "ext-iconv": "*",
     "friendsofsymfony/rest-bundle": "2.x",
+    "gedmo/doctrine-extensions": "^3.1",
     "jms/serializer-bundle": "^3.7",
     "knplabs/knp-menu-bundle": "^3.0",
     "laminas/laminas-code": "^3.4",

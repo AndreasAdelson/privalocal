@@ -169,7 +169,7 @@ validatecompany_message_admin: "L'entreprise « %s » à été acceptée sur not
 createcompany_subject: "Confirmation inscription"
 createcompany_message: "Votre inscription qui concerne l'entreprise « %s »  est en cours de traitement. Une réponse vous sera délivrée sous 48h."
 validatecompany_subject: "Acceptation de votre candidature"
-validatecompany_message: "Félicitations ! Votre entreprise « %s » fait désormais partis de Sakabay Entrepeneur et vous offrons 2 mois d'abonnement premium. Profitez bien de l'expérience Sakabay et bienvenue à vous."
+validatecompany_message: "Félicitations ! Votre entreprise « %s » fait désormais partis de Sakabay Entrepeneur et vous offrons 2 mois d'abonnement premium. Vous pouvez dès à présent compléter la page de details de votre entreprise. Profitez bien de l'expérience Sakabay et bienvenue à vous."
 updatepassword_subject: "Confirmation changement de mot de passe"
 updatepassword_message: "Votre mot de passe a bien été modifié. Un email de confirmation vous a également été envoyé."
 createbesoin_message: "Votre demande « %s » à été publiée avec succès. Nous la transmettons à nos entreprises partenaires pouvant répondre à ce besoin."
@@ -247,3 +247,6 @@ subscription_status_title_list_page: "Liste des statuts des abonnements"
 subscription_status_title_edit_page: "Modifier un statut d'abonnement"
 subscription_status_title_create_page: "Créer un statut d'abonnement"
 subscription_status_title_show_page: "Détails d'un statut d'abonnement"
+
+#Comment's pages
+comment_title_create_page: "Écrire un avis"

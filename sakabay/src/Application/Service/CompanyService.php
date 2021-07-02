@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Domain\Model\Company;
+use App\Infrastructure\Repository\CommentRepositoryInterface;
 use App\Infrastructure\Repository\CompanyRepositoryInterface;
 use DateTime;
 use Doctrine\ORM\EntityNotFoundException;
@@ -15,14 +16,16 @@ class CompanyService
      * @var CompanyRepositoryInterface
      */
     private $companyRepository;
+    private $commentRepository;
 
 
     /**
      * CompanyRestController constructor.
      */
-    public function __construct(CompanyRepositoryInterface $companyRepository)
+    public function __construct(CompanyRepositoryInterface $companyRepository, CommentRepositoryInterface $commentRepository)
     {
         $this->companyRepository = $companyRepository;
+        $this->commentRepository = $commentRepository;
     }
 
 
@@ -56,7 +59,7 @@ class CompanyService
         $companySubscriptions = $company->getCompanySubscriptions()->toArray();
         if (!empty($companySubscriptions)) {
             usort($companySubscriptions, function ($a, $b) {
-                return ($a->getdtFin()->format('Y-m-d H:i:s') < $b->getDtFin()->format('Y-m-d H:i:s'));
+                return ($a->getDtFin()->format('Y-m-d H:i:s') < $b->getDtFin()->format('Y-m-d H:i:s'));
             });
             $now = new DateTime('now');
             $lastDtFinSubscription = $companySubscriptions[0]->getDtfin();
@@ -66,6 +69,7 @@ class CompanyService
         }
         return false;
     }
+
     /**
      * Retourne une page, potentiellement triée et filtrée.
      *
@@ -134,20 +138,41 @@ class CompanyService
         $subscribedCompanys = array_filter($companys, function ($company) {
             return $this->isCompanySubscribtionActive($company) === true;
         });
+
+        //Trie des entreprises abonnées par ordre alphabétique
         usort($subscribedCompanys, function ($a, $b) {
             return (strcmp($a->getName(), $b->getName()));
         });
 
         //Entreprises non abonnées
-        //Fonctionne très bien intelephense délire ici.
         $othersCompanys = array_udiff($companys, $subscribedCompanys, function ($a, $b) {
             return $a->getId() - $b->getId();
         });
+
+        //Entreprises non abonnées avec notes
+        $othersCompanysWithNote = array_filter($othersCompanys, function ($company) {
+            return is_null($company->getNote()) === false;
+        });
+
+        //Entreprises non abonnées sans notes
+        $othersCompanys = array_udiff($othersCompanys, $othersCompanysWithNote, function ($a, $b) {
+            return $a->getId() - $b->getId();
+        });
+
+        //Trie des entreprises non abonnées avec note par note
+        usort($othersCompanysWithNote, function ($a, $b) {
+            $aNote = $a->getNote();
+            $bNote = $b->getNote();
+            return ($aNote > $bNote) ? -1 : 1;
+        });
+
+        //Trie des entreprises non abonnées sans note par ordre alphabétique
         usort($othersCompanys, function ($a, $b) {
             return (strcmp($a->getName(), $b->getName()));
         });
 
-        $companys = array_merge($subscribedCompanys, $othersCompanys);
+        //Tableau de fin dans l'ordre souhaité
+        $companys = array_merge($subscribedCompanys, $othersCompanysWithNote, $othersCompanys);
         return $this->paginateArray($companys, $perPage, $currentPage);
     }
 
@@ -181,5 +206,16 @@ class CompanyService
     public function getCompanyByUserId($utilisateur = '', $onlySubscribed = 'false')
     {
         return $this->companyRepository->getCompanyByUserId($utilisateur, $onlySubscribed);
+    }
+
+    public function updateNotation($companyId)
+    {
+        $company = $this->companyRepository->find($companyId);
+        if (!$company) {
+            throw new EntityNotFoundException('Company with id ' . $companyId . ' does not exist!');
+        }
+        $averageNotation = $this->commentRepository->getAverageNotation($companyId);
+        $company->setNote($averageNotation[0]['note_avg']);
+        $this->companyRepository->save($company);
     }
 }

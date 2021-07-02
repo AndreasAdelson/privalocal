@@ -49,7 +49,8 @@ class Company
      * "api_admin_companies",
      * "api_utilisateurs",
      * "api_dashboard_utilisateur",
-     * "api_besoins_utilisateur"
+     * "api_besoins_utilisateur",
+     * "api_comments"
      * })
      */
     private $name;
@@ -70,7 +71,8 @@ class Company
      * "api_companies",
      * "api_admin_companies",
      * "api_dashboard_utilisateur",
-     * "api_besoins_utilisateur"
+     * "api_besoins_utilisateur",
+     * "api_comments"
      * })
      */
     private $urlName;
@@ -247,7 +249,8 @@ class Company
      * @Groups({
      * "api_companies",
      * "api_besoins_utilisateur",
-     * "api_admin_companies"
+     * "api_admin_companies",
+     * "api_comments"
      * })
      */
     private $imageProfil;
@@ -273,6 +276,17 @@ class Company
      * })
      */
     private $email;
+
+    /**
+     * @var float
+     * @Expose
+     * @Groups({
+     * "api_companies",
+     * "api_besoins_utilisateur",
+     * "api_admin_companies"
+     * })
+     */
+    private $note;
 
     /**
      * Unmapped property to handle file uploads
@@ -756,6 +770,28 @@ class Company
     public function setEmail(string $email)
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of note
+     *
+     * @return  int
+     */
+    public function getNote()
+    {
+        return $this->note;
+    }
+
+    /**
+     * Set the value of note
+     * @param  int  $note
+     * @return  self
+     */
+    public function setNote(float $note)
+    {
+        $this->note = $note;
 
         return $this;
     }

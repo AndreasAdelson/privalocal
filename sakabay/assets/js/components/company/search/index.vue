@@ -110,8 +110,8 @@
           v-if="loading"
           class="loader2"
         />
-        <!-- Results here -->
         <div v-else-if="companies && companies.length > 0">
+          <!-- Results here -->
           <div
             v-for="(company, index) in companies"
             :key="'card_' + index"
@@ -133,9 +133,8 @@
             </b-col>
           </b-row>
         </div>
-        <!-- No Results founds here -->
-
         <div v-else-if="companies && companies.length == 0">
+          <!-- No Results founds here -->
           <div class="col-11 mx-auto text-center mt-5">
             <span class="fontPoppins fontSize16">{{ $t('commons.no_results_found') }}</span>
           </div>

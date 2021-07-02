@@ -11,7 +11,7 @@
       aria-hidden="true"
     >
       <div
-        class="modal-dialog modal-xl modal-manage-centered"
+        class="modal-dialog modal-xl"
         role="document"
       >
         <div v-show="loading">
@@ -80,7 +80,7 @@
                   class="row"
                 >
                   <div class="col-8 mx-auto">
-                    <fieldset class="company">
+                    <fieldset class="companySelected">
                       <label class="ml-2 mt-3">{{ $t('besoin.modal_manage.field.company') }}</label>
                       <multiselect
                         v-model="formFields.companySelected"
@@ -95,6 +95,13 @@
                         label="name"
                         :rows="8"
                       />
+                      <div
+                        v-for="errorText in formErrors.companySelected"
+                        :key="'companySelected_' + errorText"
+                        class="line-height-1"
+                      >
+                        <span class="fontSize10 red-skb">{{ errorText }}</span>
+                      </div>
                     </fieldset>
                   </div>
                 </div>
@@ -107,7 +114,7 @@
                           <star-rating
                             v-model="formFields.comment.note"
                             :item-size="50"
-                            :increment="0.5"
+                            :increment="1"
                           />
                           <div
                             v-for="errorText in formErrors.note"
@@ -120,13 +127,36 @@
                       </div>
                     </fieldset>
                   </div>
-                </div><div class="row">
+                </div>
+                <div class="row">
+                  <div class="col-10 mx-auto">
+                    <fieldset class="title">
+                      <label class="ml-2 mt-3">{{ $t('besoin.modal_manage.field.title') }}</label>
+                      <input
+                        v-model="formFields.comment.title"
+                        v-validate="formFields.comment.note ? 'required' : ''"
+                        class="form-control"
+                        :placeholder="$t('besoin.modal_manage.placeholder.title')"
+                        name="title"
+                        :rows="8"
+                      >
+                      <div
+                        v-for="errorText in formErrors.title"
+                        :key="'title_' + errorText"
+                        class="line-height-1"
+                      >
+                        <span class="fontSize10 red-skb">{{ errorText }}</span>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+                <div class="row">
                   <div class="col-10 mx-auto">
                     <fieldset class="message">
                       <label class="ml-2 mt-3">{{ $t('besoin.modal_manage.field.message') }}</label>
                       <textarea
                         v-model="formFields.comment.message"
-                        v-validate="'required'"
+                        v-validate="formFields.comment.note ? 'required' : ''"
                         class="form-control"
                         :placeholder="$t('besoin.modal_manage.placeholder.message')"
                         name="message"
@@ -221,6 +251,7 @@
           besoinStatut: null,
           companySelected: null,
           comment: {
+            title: null,
             message: null,
             company: null,
             besoin: null,
@@ -235,7 +266,9 @@
           message: [],
           company: [],
           besoin: [],
-          note: []
+          note: [],
+          title: [],
+
         },
         emptyFormFields: null,
         errorMessage: null
@@ -272,6 +305,7 @@
     },
     methods: {
       resetForm() {
+        this.$removeFormErrors();
         setTimeout(() => {
           this.loading = false;
           this.formFields = _.cloneDeep(this.emptyFormFields);
@@ -323,7 +357,6 @@
             if (e.response.headers['x-message']) {
               this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
               this.loading = false;
-
             } else {
               this.$handleFormError(e.response.data);
               this.loading = false;
@@ -370,6 +403,10 @@
           this.expiratedBesoin();
         }
       },
+
+      updateInput(value) {
+        console.log(value);
+      }
 
     },
 

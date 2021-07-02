@@ -22,11 +22,16 @@
             img-top
           >
             <b-card-text v-if="subscription.advantages">
-              <ul>
+              <ul class="fa-ul ml-2">
                 <li
                   v-for="(advantage, indexAdvantage) in subscription.advantages"
                   :key="'advantage_' + indexAdvantage"
+                  class="mb-2"
                 >
+                  <font-awesome-icon
+                    :icon="['fas', 'check']"
+                    class="green-skb mr-2"
+                  />
                   <span>{{ advantage.message }}</span>
                 </li>
               </ul>
@@ -41,7 +46,6 @@
           </b-card>
         </b-card-group>
       </div>
-      </b-card-group>
     </div>
   </div>
 </template>

@@ -59,6 +59,12 @@ App\Domain\Model\Company:
             length: 191
             column: email
             nullable: false
+        note:
+            type: decimal
+            precision: 3
+            scale: 2
+            column: note
+            nullable: true
     manyToOne:
         category:
             targetEntity: Category

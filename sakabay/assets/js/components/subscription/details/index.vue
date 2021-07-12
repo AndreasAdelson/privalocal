@@ -313,6 +313,10 @@
         type: String,
         default: null
       },
+      token: {
+        type: String,
+        default: null
+      },
     },
     data() {
       return {
@@ -327,6 +331,7 @@
           subscription: new Object(),
           stripeId: null,
           isTrial: null,
+          _token: null
         },
         formErrors: {
           dtDebut: [],
@@ -354,7 +359,8 @@
           stripeId: null,
           company: null,
           fingerprint: null,
-          subscription: null
+          subscription: null,
+          _token: null
         },
         firstCall: true,
         edit: false,
@@ -441,7 +447,9 @@
       return Promise.all(promises).then(response => {
         this.subscription = _.cloneDeep(response[0].data);
         this.formFields.subscription = _.cloneDeep(response[0].data);
-        this.companies = _.cloneDeep(response[1].data);
+        this.companies = _.cloneDeep(_.filter(response[1].data, function(company) {
+          return company.company_statut.code === 'VAL';
+        }));
         this.formFields.company = _.cloneDeep(response[1].data[0]);
         if (this.companies.length > 1) {
           this.onlyOne = false;
@@ -475,6 +483,7 @@
           });
       },
       setSubscription() {
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         return axios.post(this.API_URL, formData)
           .then(response => {
@@ -501,12 +510,12 @@
           this.paymentMethodForm.stripeId = response.setupIntent.payment_method;
           this.paymentMethodForm.company = this.companySelected.id;
           this.paymentMethodForm.subscription = _.cloneDeep(this.subscription);
-          let formData = this.$getFormFieldsData(this.paymentMethodForm);
           //Create a trial for those who subscribed when they are still in offer subscription.
           if ($isOffer && this.activeCompanySubscription) {
             this.paymentMethodForm.dtStart = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').format('YYYY/MM/DD H:m:s');
           }
-          this.paymentMethodForm.isTrial = true;
+          this.paymentMethodForm._token = _.cloneDeep(this.token);
+          let formData = this.$getFormFieldsData(this.paymentMethodForm);
           axios.post('/api/default-payment', formData)
             .then(result => {
               if ($isOffer && this.activeCompanySubscription) {

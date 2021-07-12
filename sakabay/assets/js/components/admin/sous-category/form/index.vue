@@ -99,6 +99,14 @@
               </div>
             </div>
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -133,6 +141,10 @@
         type: Number,
         default: null,
       },
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -142,13 +154,15 @@
         formFields: {
           name: null,
           code: null,
-          category: null
+          category: null,
+          _token: null
         },
         formErrors: {
           name: [],
           code: [],
           category: null,
-        }
+        },
+        errorMessage: null
       };
     },
     created() {

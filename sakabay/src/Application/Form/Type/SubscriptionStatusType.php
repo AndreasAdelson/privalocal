@@ -40,7 +40,7 @@ class SubscriptionStatusType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SubscriptionStatus::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'subscriptionStatus'
         ]);
         $resolver->setRequired('translator');
     }

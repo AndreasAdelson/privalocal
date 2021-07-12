@@ -69,7 +69,7 @@ class PaymentMethodType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => PaymentMethod::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'companySubscription'
         ]);
         $resolver->setRequired('translator');
     }

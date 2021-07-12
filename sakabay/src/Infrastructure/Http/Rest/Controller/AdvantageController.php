@@ -45,6 +45,11 @@ final class AdvantageController extends AbstractFOSRestController
     public function createAdvantage(Request $request)
     {
         $advantage = new Advantage();
+        if (!$this->isCsrfTokenValid('advantage', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(AdvantageType::class, $advantage, $formOptions);
         $form->submit($request->request->all());
@@ -134,7 +139,11 @@ final class AdvantageController extends AbstractFOSRestController
     public function editAdvantage(int $advantageId, Request $request)
     {
         $advantage = $this->advantageService->getAdvantage($advantageId);
-
+        if (!$this->isCsrfTokenValid('advantage', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$advantage) {
             throw new EntityNotFoundException('Advantage with id ' . $advantageId . ' does not exist!');
         }

@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -49,7 +49,7 @@
                   id="numSiret"
                   class="numSiret"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.fields.num_siret') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.fields.num_siret') }}</label>
                   <input
                     v-model="formFields.numSiret"
                     v-validate="'required'"
@@ -77,7 +77,7 @@
                   id="urlName"
                   class="urlName"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.url_name') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.url_name') }}</label>
                   <input
                     v-model="formFields.urlName"
                     v-validate="'required'"
@@ -100,7 +100,7 @@
                 id="category"
                 class="category"
               >
-                <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.category') }}</label>
+                <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.category') }}</label>
 
                 <multiselect
                   v-model="formFields.category"
@@ -131,7 +131,7 @@
                   id="postalAddress"
                   class="postalAddress"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.postal_address') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.postal_address') }}</label>
                   <input
                     v-model="formFields.address.postalAddress"
                     v-validate="'required'"
@@ -156,7 +156,7 @@
                   id="postalCode"
                   class="postalCode"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.postal_code') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.postal_code') }}</label>
                   <input
                     v-model="formFields.address.postalCode"
                     v-validate="'required'"
@@ -184,7 +184,7 @@
                   id="city"
                   class="city"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.city') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.city') }}</label>
                   <autocomplete
                     ref="autocomplete"
                     :min="2"
@@ -216,7 +216,7 @@
                   id="latitude"
                   class="latitude"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.latitude') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.latitude') }}</label>
                   <input
                     v-model="formFields.address.latitude"
                     v-validate="'required'"
@@ -243,7 +243,7 @@
                   id="longitude"
                   class="longitude"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company.table.fields.address.longitude') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.longitude') }}</label>
                   <input
                     v-model="formFields.address.longitude"
                     v-validate="'required'"
@@ -280,6 +280,14 @@
               </v-map>
             </div>
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -287,7 +295,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.$t('commons.edit') }}
+                {{ $t('commons.edit') }}
               </button>
             </div>
           </div>
@@ -298,10 +306,10 @@
 </template>
 <script>
   import axios from 'axios';
-  import _ from 'lodash';
   import validatorRulesMixin from 'mixins/validatorRulesMixin';
   import Autocomplete from 'vue2-autocomplete-js';
   import adminFormMixin from 'mixins/adminFormMixin';
+
   export default {
     components: {
       Autocomplete
@@ -316,6 +324,14 @@
         default: null,
       },
       urlPrecedente: {
+        type: String,
+        default: null
+      },
+      token: {
+        type: String,
+        default: null
+      },
+      page: {
         type: String,
         default: null
       }
@@ -335,7 +351,8 @@
             longitude: null
           },
           city: null,
-          validated: this.isValidated
+          page: null,
+          _token: null
         },
         formErrors: {
           name: [],
@@ -350,6 +367,7 @@
         },
         category: [],
         loading: true,
+        errorMessage: null
       };
     },
     computed: {
@@ -357,6 +375,7 @@
     },
     created() {
       let promises = [];
+      this.formFields.page = this.page;
       promises.push(axios.get('/api/admin/categories'));
       promises.push(axios.get(this.API_URL));
       return Promise.all(promises).then(res => {

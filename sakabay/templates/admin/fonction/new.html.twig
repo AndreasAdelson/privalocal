@@ -4,5 +4,5 @@
 
 {% block body %}
 <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'fonction_title_form_page'|trans }}</h1>
-<form-fonction></form-fonction>
+<form-fonction token="{{ csrf_token('fonction') }}"></form-fonction>
 {% endblock %}

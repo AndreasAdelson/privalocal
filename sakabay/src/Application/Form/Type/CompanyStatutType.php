@@ -40,7 +40,7 @@ class CompanyStatutType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CompanyStatut::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'companyStatut'
         ]);
         $resolver->setRequired('translator');
     }

@@ -32,7 +32,7 @@ class BesoinExpirateType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Besoin::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'besoin'
         ]);
         $resolver->setRequired('translator');
     }

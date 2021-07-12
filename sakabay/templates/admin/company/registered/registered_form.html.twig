@@ -7,5 +7,7 @@
 <company-admin-form
 :company-id="{{ companyId }}"
 url-precedente="{{ urlPrecedente }}"
+token="{{ csrf_token('companySubscription') }}"
+page="{{ page }}"
 ></company-admin-form>
 {% endblock %}

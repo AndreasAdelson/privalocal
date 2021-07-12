@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('subscription.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('subscription.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -50,7 +50,7 @@
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('subscription.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('subscription.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -76,7 +76,7 @@
                   id="price"
                   class="price"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('subscription.fields.price') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('subscription.fields.price') }}</label>
                   <input
                     v-model="formFields.price"
                     v-validate="'required'"
@@ -100,7 +100,7 @@
                   id="stripeId"
                   class="stripeId"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('subscription.fields.stripeId') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('subscription.fields.stripeId') }}</label>
                   <input
                     v-model="formFields.stripeId"
                     type="text"
@@ -146,7 +146,14 @@
               </div>
             </fieldset>
           </div>
-
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -154,7 +161,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.subscriptionId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ subscriptionId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -183,6 +190,10 @@
         type: Number,
         default: null,
       },
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -196,7 +207,8 @@
           price: null,
           code: null,
           advantages: [],
-          stripeId: null
+          stripeId: null,
+          _token: null
         },
         formErrors: {
           name: [],
@@ -204,7 +216,8 @@
           code: [],
           advantages: [],
           stripeId: []
-        }
+        },
+        errorMessage: null
       };
     },
     created() {

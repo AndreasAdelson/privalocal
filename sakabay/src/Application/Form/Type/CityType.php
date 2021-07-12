@@ -30,7 +30,7 @@ class CityType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => City::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'city'
         ]);
         $resolver->setRequired('translator');
     }

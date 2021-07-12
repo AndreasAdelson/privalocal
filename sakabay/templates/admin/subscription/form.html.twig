@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'subscription_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-subscription :subscription-id="{{ subscriptionId }}"></form-subscription>
+<form-subscription :subscription-id="{{ subscriptionId }}" token="{{ csrf_token('subscription') }}"></form-subscription>
 {% endblock %}

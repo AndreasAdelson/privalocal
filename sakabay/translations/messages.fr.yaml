@@ -87,6 +87,7 @@ error_application_access_message: "Vous ne disposez pas des droits pour afficher
 error_delete_besoin: "Vous ne pouvez pas supprimer cette demande car une ou plusieurs entreprises y ont déjà répondue. Rafraîchissez la page."
 error_send_quote: "Cette demande n'est plus d'actualité. Elle semble être expirée. Rafraîchissez la page."
 error_publish_besoin: "Cette demande est déjà expirée. Rafraîchissez la page."
+error_csrf_token: "Possible problème de sécurité détecté. Voulez-vous vraiment soumettre ce formulaire ? Pour réduire le risque de compromission de votre compte, veuillez vous déconnecter et vous reconnecter."
 
 #Fonction's pages
 fonction_title_list_page: "Liste des fonctions"

@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'advantage_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-advantage :advantage-id="{{ advantageId }}"></form-advantage>
+<form-advantage :advantage-id="{{ advantageId }}" token="{{ csrf_token('advantage') }}"></form-advantage>
 {% endblock %}

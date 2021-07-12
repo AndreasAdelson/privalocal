@@ -69,7 +69,7 @@ class CommentType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Comment::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'comment'
         ]);
         $resolver->setRequired('translator');
     }

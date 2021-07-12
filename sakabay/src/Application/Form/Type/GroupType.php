@@ -58,7 +58,7 @@ class GroupType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Group::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'group'
         ]);
         $resolver->setRequired('translator');
     }

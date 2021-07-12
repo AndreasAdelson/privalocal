@@ -151,7 +151,12 @@ final class UtilisateurController extends AbstractFOSRestController
     public function editUtilisateur(int $utilisateurId, Request $request)
     {
         $utilisateur = $this->utilisateurService->getUtilisateur($utilisateurId);
-
+        dump($this->isCsrfTokenValid('utilisateur', $request->request->get('_token')));
+        if (!$this->isCsrfTokenValid('utilisateur', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$utilisateur) {
             throw new NotFoundHttpException('Utilisateur with id ' . $utilisateurId . ' does not exist!');
         }
@@ -180,7 +185,11 @@ final class UtilisateurController extends AbstractFOSRestController
     public function editAccount(int $utilisateurId, Request $request, string $uploadDir, FileUploader $uploader, UserPasswordEncoderInterface $passwordEncoder)
     {
         $utilisateur = $this->utilisateurService->getUtilisateur($utilisateurId);
-
+        if (!$this->isCsrfTokenValid('utilisateur', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$utilisateur) {
             throw new EntityNotFoundException('Utilisateur with id ' . $utilisateurId . ' does not exist!');
         }

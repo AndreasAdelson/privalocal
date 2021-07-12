@@ -45,6 +45,11 @@ final class CategoryController extends AbstractFOSRestController
     public function createCategory(Request $request)
     {
         $category = new Category();
+        if (!$this->isCsrfTokenValid('category', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(CategoryType::class, $category, $formOptions);
         $form->submit($request->request->all());
@@ -134,7 +139,11 @@ final class CategoryController extends AbstractFOSRestController
     public function editCategory(int $categoryId, Request $request)
     {
         $category = $this->categoryService->getCategory($categoryId);
-
+        if (!$this->isCsrfTokenValid('category', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$category) {
             throw new EntityNotFoundException('Category with id ' . $categoryId . ' does not exist!');
         }

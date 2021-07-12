@@ -296,7 +296,7 @@
       hasOneValidated() {
         let validated;
         validated = _.filter(this.companies, company => {
-          return company.companystatut.code === 'VAL';
+          return company.company_statut.code === 'VAL';
         });
         if (validated.length > 0) {
           this.getSubscribedCompany();

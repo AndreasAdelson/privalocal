@@ -150,7 +150,14 @@
               </div>
             </div>
           </div>
-
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -192,7 +199,10 @@
         type: String,
         default: null
       },
-
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -204,7 +214,8 @@
           message: null,
           note: null,
           utilisateur: null,
-          company:null
+          company:null,
+          _token: null
         },
         formErrors: {
           title: [],
@@ -215,7 +226,8 @@
         },
         company: null,
         utilisateur: null,
-        userEmail: null
+        userEmail: null,
+        errorMessage: null
       };
     },
     created() {
@@ -238,6 +250,7 @@
         this.loading = true;
         this.formFields.utilisateur = this.utilisateurId;
         this.formFields.company = _.cloneDeep(this.company);
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         return axios.post(this.API_URL, formData)
           .then(response => {
@@ -245,7 +258,11 @@
             window.location.assign(response.headers.location);
           }).catch(e => {
             if (e.response && e.response.status && e.response.status == 400) {
-              this.$handleFormError(e.response.data);
+              if (e.response.headers['x-message']) {
+                this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
+              } else  {
+                this.$handleFormError(e.response.data);
+              }
             }
             this.loading = false;
           });

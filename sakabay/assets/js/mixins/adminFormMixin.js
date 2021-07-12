@@ -40,6 +40,7 @@ export default {
      * @returns {Promise}
      */
     submitForm() {
+      this.formFields._token = _.cloneDeep(this.token);
       let fieldsDataFunction = this.getFormFieldsData || this.$getFormFieldsData;
       return axios
         .post(this.API_URL, fieldsDataFunction.bind(this)(this.formFields))
@@ -49,7 +50,11 @@ export default {
         .catch(e => {
           this.loading = false;
           if (e.response && e.response.status && e.response.status === 400) {
-            this.$handleFormError(e.response.data);
+            if (e.response.headers['x-message']) {
+              this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
+            } else  {
+              this.$handleFormError(e.response.data);
+            }
           } else {
             this.$handleError(e);
           }

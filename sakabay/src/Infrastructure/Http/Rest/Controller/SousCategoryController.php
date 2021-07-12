@@ -45,6 +45,11 @@ final class SousCategoryController extends AbstractFOSRestController
     public function createSousCategory(Request $request)
     {
         $sousCategory = new SousCategory();
+        if (!$this->isCsrfTokenValid('sousCategory', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(SousCategoryType::class, $sousCategory, $formOptions);
         $form->submit($request->request->all());
@@ -137,7 +142,11 @@ final class SousCategoryController extends AbstractFOSRestController
     public function editSousCategory(int $sousCategoryId, Request $request)
     {
         $sousCategory = $this->sousCategoryService->getSousCategory($sousCategoryId);
-
+        if (!$this->isCsrfTokenValid('sousCategory', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$sousCategory) {
             throw new EntityNotFoundException('SousCategory with id ' . $sousCategoryId . ' does not exist!');
         }

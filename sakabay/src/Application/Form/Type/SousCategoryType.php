@@ -44,7 +44,7 @@ class SousCategoryType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SousCategory::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'sousCategory'
         ]);
         $resolver->setRequired('translator');
     }

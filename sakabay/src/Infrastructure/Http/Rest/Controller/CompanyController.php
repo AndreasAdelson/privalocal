@@ -81,7 +81,11 @@ final class CompanyController extends AbstractFOSRestController
     public function createCompany(Request $request, FileUploader $uploader, string $uploadDir)
     {
         $company = new Company();
-
+        if (!$this->isCsrfTokenValid('company', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(CompanyType::class, $company, $formOptions);
         $form->submit($request->request->all());
@@ -327,6 +331,11 @@ final class CompanyController extends AbstractFOSRestController
     public function editAdminCompany(int $companyId, Request $request)
     {
         $company = $this->companyService->getCompany($companyId);
+        if (!$this->isCsrfTokenValid('company', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$company) {
             throw new EntityNotFoundException('Company with id ' . $companyId . ' does not exist!');
         }
@@ -334,9 +343,23 @@ final class CompanyController extends AbstractFOSRestController
         $formOptions = [
             'translator' => $this->translator,
         ];
-        $isValidated =  $request->request->get('validated');
-        $ressourceLocation = $isValidated ? $this->generateUrl('company_validated_index') : $this->generateUrl('company_registered_index');
-        $request->request->remove('validated');
+        $page =  $request->request->get('page');
+        $ressourceLocation = '';
+        switch ($page) {
+            case CompanyStatutRepository::VALIDE_CODE;
+                $ressourceLocation = $this->generateUrl('company_validated_index');
+                break;
+            case CompanyStatutRepository::REFUSED_CODE;
+                $ressourceLocation = $this->generateUrl('company_refused_index');
+                break;
+            case CompanyStatutRepository::EN_COURS_CODE;
+                $ressourceLocation = $this->generateUrl('company_registered_index');
+                break;
+            default: {
+                    $ressourceLocation = $this->generateUrl('company_validated_index');
+                }
+        }
+        $request->request->remove('page');
 
         $form = $this->createForm(CompanyAdminEditType::class, $company, $formOptions);
         $form->submit($request->request->all());
@@ -358,6 +381,11 @@ final class CompanyController extends AbstractFOSRestController
     public function editUserCompany(string $companyUrlName, Request $request, string $uploadDir, FileUploader $uploader)
     {
         $company = $this->companyService->getCompanyByUrlName($companyUrlName);
+        if (!$this->isCsrfTokenValid('company', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$company) {
             throw new EntityNotFoundException('Company with url name ' . $companyUrlName . ' does not exist!');
         }
@@ -408,7 +436,11 @@ final class CompanyController extends AbstractFOSRestController
     public function validateCompany(int $companyId, Request $request)
     {
         $company = $this->companyService->getCompany($companyId);
-
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$company) {
             throw new EntityNotFoundException('Company with id ' . $companyId . ' does not exist!');
         }
@@ -483,10 +515,14 @@ final class CompanyController extends AbstractFOSRestController
      *
      * @return View
      */
-    public function declineCompany(int $companyId): View
+    public function declineCompany(int $companyId, Request $request): View
     {
         $company = $this->companyService->getCompany($companyId);
-
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$company) {
             throw new EntityNotFoundException('Company with id ' . $companyId . ' does not exist!');
         }

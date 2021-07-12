@@ -44,6 +44,11 @@ final class SubscriptionStatusController extends AbstractFOSRestController
      */
     public function createSubscriptionStatus(Request $request)
     {
+        if (!$this->isCsrfTokenValid('subsriptionStatus', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $subscriptionStatus = new SubscriptionStatus();
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(SubscriptionStatusType::class, $subscriptionStatus, $formOptions);
@@ -132,7 +137,11 @@ final class SubscriptionStatusController extends AbstractFOSRestController
     public function editSubscriptionStatus(int $subscriptionStatusId, Request $request)
     {
         $subscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatus($subscriptionStatusId);
-
+        if (!$this->isCsrfTokenValid('subsriptionStatus', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$subscriptionStatus) {
             throw new EntityNotFoundException('SubscriptionStatus with id ' . $subscriptionStatusId . ' does not exist!');
         }

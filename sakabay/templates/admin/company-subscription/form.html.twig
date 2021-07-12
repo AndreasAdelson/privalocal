@@ -9,6 +9,7 @@
     <form-company-subscription
       :company-subscription-id="{{ companySubscriptionId }}"
       url-precedente="{{ urlPrecedente }}"
+      token="{{ csrf_token('companySubscription') }}"
       >
     </form-company-subscription>
 {% endblock %}

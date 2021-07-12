@@ -47,7 +47,11 @@ final class FonctionController extends AbstractFOSRestController
     public function createFonction(Request $request)
     {
         $fonction = new Fonction();
-
+        if (!$this->isCsrfTokenValid('fonction', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = [
             'translator' => $this->translator,
         ];
@@ -135,7 +139,11 @@ final class FonctionController extends AbstractFOSRestController
     public function editFonction(int $fonctionId, Request $request)
     {
         $fonction = $this->fonctionService->getFonction($fonctionId);
-
+        if (!$this->isCsrfTokenValid('fonction', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$fonction) {
             throw new EntityNotFoundException('Fonction with id ' . $fonctionId . ' does not exist!');
         }

@@ -6,5 +6,6 @@
  <abonnement-details
  :subscription-name="{{ subscriptionName|json_encode }}"
  :utilisateur-id="{{ utilisateurId }}"
+ token="{{ csrf_token('companySubscription') }}"
  ></abonnement-details>
 {% endblock %}

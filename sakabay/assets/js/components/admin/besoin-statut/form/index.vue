@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('besoin_statut.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('besoin_statut.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -49,7 +49,7 @@
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('besoin_statut.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('besoin_statut.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -75,7 +75,7 @@
                   id="priority"
                   class="priority"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('besoin_statut.fields.priority') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('besoin_statut.fields.priority') }}</label>
                   <input
                     v-model="formFields.priority"
                     v-validate="'required'"
@@ -94,6 +94,14 @@
               </div>
             </div>
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -101,7 +109,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.besoinStatutId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ besoinStatutId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -126,6 +134,10 @@
       besoinStatutId: {
         type: Number,
         default: null,
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -136,12 +148,14 @@
           name: null,
           code: null,
           priority: null,
+          _token: null
         },
         formErrors: {
           name: [],
           code: [],
           priority: []
-        }
+        },
+        errorMessage: null
       };
     },
     created() {

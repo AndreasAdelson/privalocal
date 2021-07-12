@@ -26,7 +26,7 @@
                     id="email"
                     class="email"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.email') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.email') }}</label>
                     <input
                       v-model="formFields.email"
                       v-validate="'required|email'"
@@ -50,7 +50,7 @@
                     id="firstName"
                     class="firstName"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.first_name') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.first_name') }}</label>
                     <input
                       v-model="formFields.firstName"
                       v-validate="'required'"
@@ -77,7 +77,7 @@
                     id="lastName"
                     class="lastName"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.last_name') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.last_name') }}</label>
                     <input
                       v-model="formFields.lastName"
                       type="text"
@@ -99,7 +99,7 @@
                     id="username"
                     class="username"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.username') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.username') }}</label>
                     <input
                       v-model="formFields.username"
                       v-validate="'required_username'"
@@ -118,6 +118,14 @@
                 </div>
               </div>
             </div>
+            <span
+              v-if="errorMessage"
+              id="error-message"
+              role="alert"
+              class="fontUbuntuItalic fontSize13 red-skb"
+            >
+              {{ errorMessage }}
+            </span>
             <div class="row">
               <div class="col-6 offset-3">
                 <button
@@ -125,7 +133,7 @@
                   class="btn button_skb fontUbuntuItalic"
                   @click="$validateForm()"
                 >
-                  {{ this.$t('commons.edit') }}
+                  {{ $t('commons.edit') }}
                 </button>
               </div>
             </div>
@@ -138,32 +146,41 @@
 <script>
   import axios from 'axios';
   import validatorRulesMixin from 'mixins/validatorRulesMixin';
+  import adminFormMixin from 'mixins/adminFormMixin';
 
   export default {
     mixins: [
-      validatorRulesMixin
+      validatorRulesMixin,
+      adminFormMixin
     ],
     props: {
       utilisateurId: {
         type: Number,
         default: null,
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
       return {
+        API_URL: '/api/admin/utilisateurs/' + this.utilisateurId,
         loading: false,
         formFields: {
           email: null,
           firstName: null,
           lastName: null,
           username: null,
+          _token: null
         },
         formErrors: {
           email: [],
           firstName: [],
           lastName: [],
           username: []
-        }
+        },
+        errorMessage: null
       };
     },
     created() {
@@ -180,16 +197,7 @@
       }
     },
     methods: {
-      submitForm() {
-        return axios.post('/api/admin/utilisateurs/' + this.utilisateurId, this.formFields)
-          .then(response => {
-            window.location.assign(response.headers.location);
-          }).catch(e => {
-            if (e.response && e.response.status && e.response.status == 400) {
-              this.$handleFormError(e.response.data);
-            }
-          });
-      },
+
     },
   };
 </script>

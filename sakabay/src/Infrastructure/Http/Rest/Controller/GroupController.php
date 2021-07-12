@@ -46,6 +46,11 @@ final class GroupController extends AbstractFOSRestController
     public function createGroup(Request $request)
     {
         $group = new Group();
+        if (!$this->isCsrfTokenValid('group', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(GroupType::class, $group, $formOptions);
         $form->submit($request->request->all());
@@ -133,7 +138,11 @@ final class GroupController extends AbstractFOSRestController
     public function editGroup(int $groupId, Request $request)
     {
         $group = $this->groupService->getGroup($groupId);
-
+        if (!$this->isCsrfTokenValid('group', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$group) {
             throw new EntityNotFoundException('Group with id ' . $groupId . ' does not exist!');
         }

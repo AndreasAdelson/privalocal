@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'role_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-role :role-id="{{ roleId }}"></form-role>
+<form-role :role-id="{{ roleId }}" token="{{ csrf_token('role') }}"></form-role>
 {% endblock %}

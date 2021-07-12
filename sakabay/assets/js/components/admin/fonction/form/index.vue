@@ -21,7 +21,7 @@
                     id="code"
                     class="code"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('fonction.fields.code') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('fonction.fields.code') }}</label>
                     <input
                       v-model="formFields.code"
                       v-validate="'required'"
@@ -45,7 +45,7 @@
                     id="description"
                     class="description"
                   >
-                    <label class="fontUbuntuItalic fontSize16">{{ this.$t('fonction.placeholder.description') }}</label>
+                    <label class="fontUbuntuItalic fontSize16">{{ $t('fonction.placeholder.description') }}</label>
                     <input
                       v-model="formFields.description"
                       v-validate="'required'"
@@ -65,6 +65,14 @@
               </div>
             </div>
             <!-- Second row  -->
+            <span
+              v-if="errorMessage"
+              id="error-message"
+              role="alert"
+              class="fontUbuntuItalic fontSize13 red-skb"
+            >
+              {{ errorMessage }}
+            </span>
             <div class="row">
               <div class="col-6 offset-3">
                 <button
@@ -72,7 +80,7 @@
                   class="btn button_skb fontUbuntuItalic"
                   @click="$validateForm()"
                 >
-                  {{ this.$t('commons.create') }}
+                  {{ $t('commons.create') }}
                 </button>
               </div>
             </div>
@@ -85,37 +93,37 @@
 <script>
   import axios from 'axios';
   import validatorRulesMixin from 'mixins/validatorRulesMixin';
+  import adminFormMixin from 'mixins/adminFormMixin';
 
   export default {
     mixins: [
-      validatorRulesMixin
+      validatorRulesMixin,
+      adminFormMixin
     ],
     props: {
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
+        API_URL: '/api/admin/fonctions',
         formFields: {
           code: null,
           description: null,
+          _token: null
         },
         formErrors: {
           code: [],
           description: [],
-        }
+        },
+        errorMessage: null
       };
     },
 
     methods: {
-      submitForm() {
-        return axios.post('/api/admin/fonctions', this.formFields)
-          .then(response => {
-            window.location.assign(response.headers.location);
-          }).catch(e => {
-            if (e.response && e.response.status && e.response.status == 400) {
-              this.$handleFormError(e.response.data);
-            }
-          });
-      },
+
     },
   };
 </script>

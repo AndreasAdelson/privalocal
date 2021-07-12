@@ -50,7 +50,7 @@ class BesoinStatutType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => BesoinStatut::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'besoinStatut'
         ]);
         $resolver->setRequired('translator');
     }

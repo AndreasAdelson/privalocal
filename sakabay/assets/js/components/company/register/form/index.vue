@@ -287,7 +287,14 @@
               </fieldset>
             </div>
           </div>
-
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -326,6 +333,10 @@
       urlPrecedente: {
         type: String,
         default: null
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -341,7 +352,8 @@
           category: null,
           city: new Object(),
           email: null,
-          sousCategorys: null
+          sousCategorys: null,
+          _token: null
         },
         position: {
           lng: null,
@@ -363,7 +375,8 @@
         category: [],
         utilisateur: null,
         userEmail: null,
-        sousCategorys: []
+        sousCategorys: [],
+        errorMessage: null
       };
     },
     watch: {
@@ -445,6 +458,7 @@
           this.formFields.city = this.$refs.autocomplete.json[0];
         }
         this.formFields.utilisateur = _.cloneDeep(this.utilisateur);
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         return axios.post(this.API_URL, formData)
           .then(response => {

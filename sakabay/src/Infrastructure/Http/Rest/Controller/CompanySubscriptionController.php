@@ -89,7 +89,11 @@ final class CompanySubscriptionController extends AbstractFOSRestController
     public function editCompanySubscription(int $companySubscriptionId, Request $request)
     {
         $companySubscription = $this->companySubscriptionService->getCompanySubscription($companySubscriptionId);
-
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$companySubscription) {
             throw new EntityNotFoundException('CompanySubscription with id ' . $companySubscriptionId . ' does not exist.');
         }
@@ -119,6 +123,11 @@ final class CompanySubscriptionController extends AbstractFOSRestController
      */
     public function createCompanySubscription(Request $request)
     {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $isTrial = $request->request->get('isTrial');
         $request->request->remove('isTrial');
         $companyId = $request->request->get('company');
@@ -211,12 +220,17 @@ final class CompanySubscriptionController extends AbstractFOSRestController
      */
     public function setPaymentMethodAndPay(Request $request)
     {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $companyId = $request->request->get('company');
         $stripeId = $request->request->get('stripeId');
         $subscriptionId = $request->request->get('subscription');
         $request->request->remove('subscription');
         $dtStart = $request->request->get('dtStart');
-        $request->request->remove('dtstart');
+        $request->request->remove('dtStart');
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
         $priceStripeId = $subscription->getStripeId();
         $company = $this->companyService->getCompany($companyId);
@@ -264,6 +278,11 @@ final class CompanySubscriptionController extends AbstractFOSRestController
      */
     public function subscribeWithDefaultPaymentMethod(Request $request)
     {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $companyId = $request->request->get('company');
         $requestDtStart = $request->request->get('dtStart');
         $subscriptionId = $request->request->get('subscription');
@@ -316,6 +335,11 @@ final class CompanySubscriptionController extends AbstractFOSRestController
      */
     public function cancelSubscription(Request $request)
     {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $companyId = $request->request->get('company');
         $activeSubscription = $this->companySubscriptionService->getActiveSubscription($companyId, true, false);
         $subscriptionStripeId = $activeSubscription->getStripeId();
@@ -351,6 +375,11 @@ final class CompanySubscriptionController extends AbstractFOSRestController
      */
     public function updateDefaultPayment(Request $request)
     {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $companyId = $request->request->get('company');
         $paymentMethodId = $request->request->get('stripeId');
         $subscriptionName = $request->request->get('subscriptionName');

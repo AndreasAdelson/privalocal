@@ -125,6 +125,14 @@
               </div>
             </fieldset>
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -159,6 +167,10 @@
       roleId: {
         type: Number,
         default: null,
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -173,14 +185,16 @@
           name: null,
           code: null,
           fonctions: [],
-          groups: []
+          groups: [],
+          _token: null
         },
         formErrors: {
           name: [],
           code: [],
           fonctions: [],
           groups: []
-        }
+        },
+        errorMessage: null
       };
     },
     created() {

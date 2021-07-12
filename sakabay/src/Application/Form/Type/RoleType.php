@@ -58,7 +58,7 @@ class RoleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Role::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'role'
         ]);
         $resolver->setRequired('translator');
     }

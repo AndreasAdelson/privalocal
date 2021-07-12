@@ -8,6 +8,8 @@
  <form-comment
   :utilisateur-id="{{ utilisateurId }}"
   url-precedente="{{ urlPrecedente }}"
-  :company-id="{{ companyId }}">
+  :company-id="{{ companyId }}"
+  token="{{ csrf_token('comment') }}"
+  >
  </form-comment>
 {% endblock %}

@@ -15,7 +15,7 @@
             class="float-right"
             :href="'/admin/entreprise/edit/' + companyId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>
@@ -74,7 +74,7 @@
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ company.companystatut.name }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ company.company_statut.name }}</span>
           </div>
         </div>
 

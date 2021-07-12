@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('group.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('group.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -49,7 +49,7 @@
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('group.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('group.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -138,6 +138,14 @@
               @delete-entity="$onDeleteEntity(index, 'utilisateurs', formFields)"
             />
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -145,7 +153,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.groupId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ groupId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -177,6 +185,10 @@
       groupId: {
         type: Number,
         default: null,
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -189,7 +201,8 @@
           name: null,
           code: null,
           roles: [],
-          utilisateurs: []
+          utilisateurs: [],
+          _token: null
         },
         formErrors: {
           name: [],
@@ -197,7 +210,8 @@
           roles: [],
           utilisateurs: []
         },
-        includedFormsFields: undefined
+        includedFormsFields: undefined,
+        errorMessage: null
       };
     },
     created() {

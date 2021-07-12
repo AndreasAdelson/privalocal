@@ -46,6 +46,11 @@ final class RoleController extends AbstractFOSRestController
     public function createRole(Request $request)
     {
         $role = new Role();
+        if (!$this->isCsrfTokenValid('role', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(RoleType::class, $role, $formOptions);
         $form->submit($request->request->all());
@@ -133,7 +138,11 @@ final class RoleController extends AbstractFOSRestController
     public function editRole(int $roleId, Request $request)
     {
         $role = $this->roleService->getRole($roleId);
-
+        if (!$this->isCsrfTokenValid('role', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$role) {
             throw new EntityNotFoundException('Role with id ' . $roleId . ' does not exist!');
         }

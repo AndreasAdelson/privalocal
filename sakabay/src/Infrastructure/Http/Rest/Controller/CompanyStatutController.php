@@ -46,6 +46,11 @@ final class CompanyStatutController extends AbstractFOSRestController
     public function createCompanyStatut(Request $request)
     {
         $companyStatut = new CompanyStatut();
+        if (!$this->isCsrfTokenValid('companyStatut', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(CompanyStatutType::class, $companyStatut, $formOptions);
         $form->submit($request->request->all());
@@ -133,7 +138,11 @@ final class CompanyStatutController extends AbstractFOSRestController
     public function editCompanyStatut(int $companyStatutId, Request $request)
     {
         $companyStatut = $this->companyStatutService->getCompanyStatut($companyStatutId);
-
+        if (!$this->isCsrfTokenValid('companyStatut', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$companyStatut) {
             throw new EntityNotFoundException('CompanyStatut with id ' . $companyStatutId . ' does not exist!');
         }

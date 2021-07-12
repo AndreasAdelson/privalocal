@@ -53,7 +53,7 @@ class AdvantageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Advantage::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'advantage'
         ]);
         $resolver->setRequired('translator');
     }

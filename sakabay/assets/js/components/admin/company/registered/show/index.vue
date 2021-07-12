@@ -5,7 +5,7 @@
         <div class="loader" />
       </div>
     </div>
-    <div v-else-if="!loading && company.companystatut.code === 'VAL'">
+    <div v-else-if="!loading && company.company_statut.code === 'VAL'">
       <div class="row pt-5">
         <div class="col">
           <p class="text-center">
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="!loading && company.companystatut.code === 'REF'">
+    <div v-else-if="!loading && company.company_statut.code === 'REF'">
       <div class="row pt-5">
         <div class="col">
           <p class="text-center">
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="!loading && company.companystatut.code === 'ENC'">
+    <div v-else-if="!loading && company.company_statut.code === 'ENC'">
       <div
         v-if="canEdit"
         class="row mt-3 "
@@ -97,7 +97,7 @@
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ company.companystatut.name }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ company.company_statut.name }}</span>
           </div>
           <div class="col-6">
             <span class="fontHelveticaOblique fontSize18">{{ company.city.name }}</span>
@@ -164,8 +164,16 @@
           </div>
         </div>
       </div>
+      <span
+        v-if="errorMessage"
+        id="error-message"
+        role="alert"
+        class="fontUbuntuItalic fontSize13 red-skb"
+      >
+        {{ errorMessage }}
+      </span>
       <div
-        v-if="company.companystatut.code === 'ENC'"
+        v-if="company.company_statut.code === 'ENC'"
         class="row justify-content-center my-3"
       >
         <div class="col-2">
@@ -216,6 +224,7 @@
   import axios from 'axios';
   import ConfirmModal from 'components/commons/confirm-modal';
   import moment from 'moment';
+  import _ from 'lodash';
 
   export default {
     components: {
@@ -234,6 +243,10 @@
         type: String,
         default: null
       },
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -246,7 +259,12 @@
           dtFin: moment().format('YYYY/MM/DD H:m:s'),
           company: new Object(),
           stripeId: null,
-        }
+          _token: null
+        },
+        declineForm: {
+          _token: null
+        },
+        errorMessage: null
       };
     },
     created() {
@@ -268,6 +286,7 @@
         let futureMonth= moment(currentDate).add(2, 'M');
         this.validateForm.dtFin = futureMonth.format('YYYY/MM/DD H:m:s');
         this.validateForm.company = this.companyId;
+        this.validateForm._token = _.cloneDeep(this.token);
 
         let formData = this.$getFormFieldsData(this.validateForm);
         return axios.post('/api/admin/companies/' + this.companyId + '/validation', formData)
@@ -275,13 +294,24 @@
             this.loading = false;
             window.location.assign(response.headers.location);
           }).catch(e => {
-            this.$handleError(e);
+            if (e.response && e.response.status && e.response.status === 400) {
+              if (e.response.headers['x-message']) {
+                this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
+              } else {
+                this.$handleFormError(e.response.data);
+              }
+            } else {
+              this.$handleError(e);
+            }
             this.loading = false;
           });
       },
       declineCompany() {
         this.loading = true;
-        return axios.post('/api/admin/companies/' + this.companyId + '/decline')
+        this.declineForm._token = _.cloneDeep(this.token);
+        let formData = this.$getFormFieldsData(this.declineForm);
+
+        return axios.post('/api/admin/companies/' + this.companyId + '/decline', formData)
           .then(response => {
             this.loading = false;
             window.location.assign(response.headers.location);

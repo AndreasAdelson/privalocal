@@ -24,7 +24,7 @@
                   id="dtDebut"
                   class="dtDebut"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company_subscription.fields.dtDebut') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company_subscription.fields.dtDebut') }}</label>
                   <datepicker
                     ref="datepicker_dtDebut"
                     v-model="formFields.dtDebut"
@@ -51,7 +51,7 @@
                   id="dtFin"
                   class="dtFin"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company_subscription.fields.dtFin') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company_subscription.fields.dtFin') }}</label>
                   <datepicker
                     ref="datepicker_dtFin"
                     v-model="formFields.dtFin"
@@ -80,7 +80,7 @@
                   id="subscriptionStatus"
                   class="subscriptionStatus"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company_subscription.fields.subscription_status') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company_subscription.fields.subscription_status') }}</label>
                   <multiselect
                     v-model="formFields.subscriptionStatus"
                     v-validate="'required'"
@@ -108,7 +108,7 @@
                   id="stripeId"
                   class="stripeId"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('company_subscription.fields.stripe_id') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('company_subscription.fields.stripe_id') }}</label>
                   <input
                     v-model="formFields.stripeId"
                     v-validate="'required'"
@@ -127,6 +127,14 @@
               </div>
             </div>
           </div>
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -134,7 +142,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm(urlPrecedente)"
               >
-                {{ this.$t('commons.edit') }}
+                {{ $t('commons.edit') }}
               </button>
             </div>
           </div>
@@ -168,6 +176,10 @@
       urlPrecedente: {
         type: String,
         default: null
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -180,6 +192,7 @@
           dtFin: null,
           subscriptionStatus: null,
           stripeId: null,
+          _token: null
         },
         formErrors: {
           dtDebut: [],
@@ -192,6 +205,7 @@
           en: en,
         },
         subscriptionStatus: [],
+        errorMessage: null
       };
     },
     created() {

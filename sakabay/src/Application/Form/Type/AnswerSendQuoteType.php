@@ -70,7 +70,7 @@ class AnswerSendQuoteType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Answer::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'answer'
         ]);
         $resolver->setRequired('translator');
     }

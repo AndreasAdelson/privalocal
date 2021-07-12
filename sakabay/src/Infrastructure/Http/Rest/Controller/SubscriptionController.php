@@ -46,6 +46,11 @@ final class SubscriptionController extends AbstractFOSRestController
     public function createSubscriptionAdmin(Request $request)
     {
         $subscription = new Subscription();
+        if (!$this->isCsrfTokenValid('subscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         //Integrate stripe id here
         if (empty($request->request->get('stripeId'))) {
             $stripe = new StripeClient($this->getParameter('secret_key'));
@@ -141,6 +146,11 @@ final class SubscriptionController extends AbstractFOSRestController
     public function editSubscriptionAdmin(int $subscriptionId, Request $request)
     {
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
+        if (!$this->isCsrfTokenValid('subscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         //Integrate stripe id here
         if (empty($request->request->get('stripeId'))) {
             $stripe = new StripeClient($this->getParameter('secret_key'));

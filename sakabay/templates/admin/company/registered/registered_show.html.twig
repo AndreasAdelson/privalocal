@@ -7,5 +7,6 @@
     :company-id="{{ companyId }}"
     :can-edit="{{ canEdit|json_encode }}"
     url-precedente="{{ urlPrecedente }}"
+    token="{{ csrf_token('companySubscription') }}"
     ></company-registered-show>
 {% endblock %}

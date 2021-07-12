@@ -4,5 +4,5 @@
 
 {% block body %}
 <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'user_title_edit_page'|trans }}</h1>
-<edit-user :utilisateur-id="{{ utilisateurId }}" ></edit-user>
+<edit-user :utilisateur-id="{{ utilisateurId }}" token="{{ csrf_token('utilisateur') }}"></edit-user>
 {% endblock %}

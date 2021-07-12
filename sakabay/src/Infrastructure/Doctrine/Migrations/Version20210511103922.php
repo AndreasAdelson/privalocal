@@ -12,12 +12,12 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210511103922 extends AbstractMigration
 {
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE address (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un address\', postal_address VARCHAR(191) NOT NULL, postal_code INT NOT NULL, latitude NUMERIC(9, 6) NOT NULL, longitude NUMERIC(9, 6) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant une adresse.\' ');
@@ -28,7 +28,7 @@ final class Version20210511103922 extends AbstractMigration
         $this->addSql('CREATE TABLE category (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un category\', name VARCHAR(191) NOT NULL, code VARCHAR(100) NOT NULL, UNIQUE INDEX uniqueGroupCode (code), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant un Category.\' ');
         $this->addSql('CREATE TABLE city (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un city\', name VARCHAR(191) NOT NULL, UNIQUE INDEX uniqueGroupCode (name), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant une adresse.\' ');
         $this->addSql('CREATE TABLE comment (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un commentaire/avis\', id_besoin INT DEFAULT NULL COMMENT \'Identifiant technique d\'\'un besoin\', company_id INT DEFAULT NULL COMMENT \'Identifiant technique d\'\'un company\', utilisateur_id INT DEFAULT NULL COMMENT \'Identifiant technique d\'\'un user\', author_company_id INT DEFAULT NULL COMMENT \'Identifiant technique d\'\'un company\', message VARCHAR(191) DEFAULT NULL, note NUMERIC(2, 1) NOT NULL, UNIQUE INDEX UNIQ_9474526CA72F5DFC (id_besoin), INDEX IDX_9474526C979B1AD6 (company_id), INDEX IDX_9474526CFB88E14F (utilisateur_id), INDEX IDX_9474526CD592666D (author_company_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant un commentaire/avis.\' ');
-        $this->addSql('CREATE TABLE company (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un company\', id_address INT NOT NULL COMMENT \'Identifiant technique d\'\'un address\', id_category INT NOT NULL COMMENT \'Identifiant technique d\'\'un category\', id_companystatut INT NOT NULL COMMENT \'Identifiant technique d\'\'un CompanyStatut\', id_city INT NOT NULL COMMENT \'Identifiant technique d\'\'un city\', utilisateur_id INT NOT NULL COMMENT \'Identifiant technique d\'\'un user\', name VARCHAR(191) NOT NULL, num_siret VARCHAR(14) NOT NULL, url_name VARCHAR(100) NOT NULL, dt_created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, description_full VARCHAR(5000) DEFAULT NULL, description_clean VARCHAR(2000) DEFAULT NULL, image_profil VARCHAR(100) DEFAULT NULL, UNIQUE INDEX UNIQ_4FBF094FD3D3C6F1 (id_address), INDEX IDX_4FBF094F5697F554 (id_category), INDEX IDX_4FBF094F96856F23 (id_companystatut), INDEX IDX_4FBF094FA67B1E36 (id_city), INDEX IDX_4FBF094FFB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant un Company.\' ');
+        $this->addSql('CREATE TABLE company (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un company\', id_address INT NOT NULL COMMENT \'Identifiant technique d\'\'un address\', id_category INT NOT NULL COMMENT \'Identifiant technique d\'\'un category\', id_company_statut INT NOT NULL COMMENT \'Identifiant technique d\'\'un CompanyStatut\', id_city INT NOT NULL COMMENT \'Identifiant technique d\'\'un city\', utilisateur_id INT NOT NULL COMMENT \'Identifiant technique d\'\'un user\', name VARCHAR(191) NOT NULL, num_siret VARCHAR(14) NOT NULL, url_name VARCHAR(100) NOT NULL, dt_created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, description_full VARCHAR(5000) DEFAULT NULL, description_clean VARCHAR(2000) DEFAULT NULL, image_profil VARCHAR(100) DEFAULT NULL, UNIQUE INDEX UNIQ_4FBF094FD3D3C6F1 (id_address), INDEX IDX_4FBF094F5697F554 (id_category), INDEX IDX_4FBF094F96856F23 (id_company_statut), INDEX IDX_4FBF094FA67B1E36 (id_city), INDEX IDX_4FBF094FFB88E14F (utilisateur_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant un Company.\' ');
         $this->addSql('CREATE TABLE company_sous_categories (company_id INT NOT NULL COMMENT \'Identifiant technique d\'\'un company\', id_company INT NOT NULL COMMENT \'Identifiant technique d\'\'une sous category\', INDEX IDX_937A29FF979B1AD6 (company_id), INDEX IDX_937A29FF9122A03F (id_company), PRIMARY KEY(company_id, id_company)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE company_statut (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique d\'\'un CompanyStatut\', name VARCHAR(191) NOT NULL, code VARCHAR(100) NOT NULL, UNIQUE INDEX uniqueCompanyStatutCode (code), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité représentant le statut de l entreprise.\' ');
         $this->addSql('CREATE TABLE company_subscription (id INT AUTO_INCREMENT NOT NULL COMMENT \'Identifiant technique de la company_subscription\', id_subscription INT NOT NULL COMMENT \'Identifiant technique d\'\'un subscription\', id_company INT NOT NULL COMMENT \'Identifiant technique d\'\'un company\', dt_debut DATETIME DEFAULT NULL, dt_fin DATETIME DEFAULT NULL, INDEX IDX_5D0BAE1D800711A1 (id_subscription), INDEX IDX_5D0BAE1D9122A03F (id_company), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'Entité pour définir la validité de l\'\'abonnement.\' ');
@@ -60,7 +60,7 @@ final class Version20210511103922 extends AbstractMigration
         $this->addSql('ALTER TABLE comment ADD CONSTRAINT FK_9474526CD592666D FOREIGN KEY (author_company_id) REFERENCES company (id)');
         $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094FD3D3C6F1 FOREIGN KEY (id_address) REFERENCES address (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094F5697F554 FOREIGN KEY (id_category) REFERENCES category (id)');
-        $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094F96856F23 FOREIGN KEY (id_companystatut) REFERENCES company_statut (id)');
+        $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094F96856F23 FOREIGN KEY (id_company_statut) REFERENCES company_statut (id)');
         $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094FA67B1E36 FOREIGN KEY (id_city) REFERENCES city (id)');
         $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094FFB88E14F FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE company_sous_categories ADD CONSTRAINT FK_937A29FF979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) ON DELETE CASCADE');
@@ -79,7 +79,7 @@ final class Version20210511103922 extends AbstractMigration
         $this->addSql('ALTER TABLE utilisateurs_groupes ADD CONSTRAINT FK_59950F8C834505F5 FOREIGN KEY (id_group) REFERENCES groupe (id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE company DROP FOREIGN KEY FK_4FBF094FD3D3C6F1');

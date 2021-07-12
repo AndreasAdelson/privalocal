@@ -3,7 +3,9 @@
 namespace App\Infrastructure\Http\Web\Controller;
 
 use App\Application\Service\CompanyService;
+use App\Application\Service\CompanyStatutService;
 use App\Domain\Model\Company;
+use App\Infrastructure\Repository\CompanyStatutRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -13,13 +15,15 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class CompanyController extends AbstractController
 {
     private $companyService;
+    private $companyStatutService;
 
     /**
      * CompanyWebController constructor.
      */
-    public function __construct(CompanyService $companyService)
+    public function __construct(CompanyService $companyService, CompanyStatutService $companyStatutService)
     {
         $this->companyService = $companyService;
+        $this->companyStatutService = $companyStatutService;
     }
     /**
      * @Route("entreprises/search", name="company_search", methods="GET")
@@ -97,7 +101,8 @@ class CompanyController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('admin/company/validated/validated_form.html.twig', [
             'companyId' => $id,
-            'urlPrecedente' => $this->urlPrecedente()
+            'urlPrecedente' => $this->urlPrecedente(),
+            'page' => CompanyStatutRepository::VALIDE_CODE
         ]);
     }
 
@@ -136,7 +141,8 @@ class CompanyController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('admin/company/registered/registered_form.html.twig', [
             'companyId' => $id,
-            'urlPrecedente' => $this->urlPrecedente()
+            'urlPrecedente' => $this->urlPrecedente(),
+            'page' => CompanyStatutRepository::EN_COURS_CODE
         ]);
     }
 
@@ -175,7 +181,8 @@ class CompanyController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         return $this->render('admin/company/refused/refused_form.html.twig', [
             'companyId' => $id,
-            'urlPrecedente' => $this->urlPrecedente()
+            'urlPrecedente' => $this->urlPrecedente(),
+            'page' => CompanyStatutRepository::REFUSED_CODE
         ]);
     }
 

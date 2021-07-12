@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'category_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-category :category-id="{{ categoryId }}"></form-category>
+<form-category :category-id="{{ categoryId }}" token="{{ csrf_token('category') }}"></form-category>
 {% endblock %}

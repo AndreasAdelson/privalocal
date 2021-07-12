@@ -92,7 +92,7 @@ class CompanyUserEditType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Company::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'company'
         ]);
         $resolver->setRequired('translator');
     }

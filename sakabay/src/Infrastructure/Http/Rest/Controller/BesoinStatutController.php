@@ -46,6 +46,11 @@ final class BesoinStatutController extends AbstractFOSRestController
     public function createBesoinStatut(Request $request)
     {
         $besoinStatut = new BesoinStatut();
+        if (!$this->isCsrfTokenValid('besoinStatut', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(BesoinStatutType::class, $besoinStatut, $formOptions);
         $form->submit($request->request->all());
@@ -146,7 +151,11 @@ final class BesoinStatutController extends AbstractFOSRestController
     public function editBesoinStatut(int $besoinStatutId, Request $request)
     {
         $besoinStatut = $this->besoinStatutService->getBesoinStatut($besoinStatutId);
-
+        if (!$this->isCsrfTokenValid('besoinStatut', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$besoinStatut) {
             throw new EntityNotFoundException('BesoinStatut with id ' . $besoinStatutId . ' does not exist!');
         }

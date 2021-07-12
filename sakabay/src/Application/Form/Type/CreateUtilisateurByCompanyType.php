@@ -54,7 +54,7 @@ class CreateUtilisateurByCompanyType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'utilisateur'
         ]);
         $resolver->setRequired('translator');
     }

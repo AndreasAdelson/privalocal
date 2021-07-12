@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'group_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-group :group-id="{{ groupId }}"></form-group>
+<form-group :group-id="{{ groupId }}" token="{{ csrf_token('group') }}"></form-group>
 {% endblock %}

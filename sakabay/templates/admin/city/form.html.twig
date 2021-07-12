@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'city_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-city :city-id="{{ cityId }}"></form-city>
+<form-city :city-id="{{ cityId }}" token="{{ csrf_token('city') }}"></form-city>
 {% endblock %}

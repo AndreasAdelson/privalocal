@@ -54,8 +54,8 @@ class CompanyRepository extends AbstractRepository implements CompanyRepositoryI
     ) {
         $qb = $this->createQueryBuilder('c');
         if (!empty($codeStatut)) {
-            $qb->leftJoin('c.companystatut', 'companystatut')
-                ->andWhere('companystatut.code = :codeStatut')
+            $qb->leftJoin('c.companyStatut', 'companyStatut')
+                ->andWhere('companyStatut.code = :codeStatut')
                 ->setParameter('codeStatut', $codeStatut);
         }
         if (!empty($filterText)) {
@@ -96,8 +96,8 @@ class CompanyRepository extends AbstractRepository implements CompanyRepositoryI
     ) {
         $qb = $this->createQueryBuilder('c');
         if (!empty($codeStatut)) {
-            $qb->leftJoin('c.companystatut', 'companystatut')
-                ->andWhere('companystatut.code = :codeStatut')
+            $qb->leftJoin('c.companyStatut', 'companyStatut')
+                ->andWhere('companyStatut.code = :codeStatut')
                 ->setParameter('codeStatut', $codeStatut);
         }
         if (!empty($filterText)) {

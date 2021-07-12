@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('category.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('category.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -49,7 +49,7 @@
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('category.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('category.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -68,7 +68,14 @@
               </div>
             </div>
           </div>
-
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -76,7 +83,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.categoryId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ categoryId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -102,6 +109,10 @@
         type: Number,
         default: null,
       },
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -110,12 +121,14 @@
         sousCategorys: [],
         formFields: {
           name: null,
-          code: null
+          code: null,
+          _token: null
         },
         formErrors: {
           name: [],
           code: [],
-        }
+        },
+        errorMessage: null
       };
     },
     created() {

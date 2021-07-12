@@ -45,6 +45,11 @@ final class CityController extends AbstractFOSRestController
     public function createCity(Request $request)
     {
         $city = new City();
+        if (!$this->isCsrfTokenValid('city', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = ['translator' => $this->translator];
         $form = $this->createForm(CityType::class, $city, $formOptions);
         $form->submit($request->request->all());
@@ -145,7 +150,11 @@ final class CityController extends AbstractFOSRestController
     public function editCity(int $cityId, Request $request)
     {
         $city = $this->cityService->getCity($cityId);
-
+        if (!$this->isCsrfTokenValid('city', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         if (!$city) {
             throw new EntityNotFoundException('City with id ' . $cityId . ' does not exist!');
         }

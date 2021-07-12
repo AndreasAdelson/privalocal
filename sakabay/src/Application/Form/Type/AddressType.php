@@ -58,7 +58,7 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Address::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'address'
         ]);
         $resolver->setRequired('translator');
     }

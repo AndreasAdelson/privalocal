@@ -73,7 +73,7 @@ class EditCompanySubscriptionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => CompanySubscription::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'companySubscription'
         ]);
         $resolver->setRequired('translator');
     }

@@ -82,7 +82,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'registration'
         ]);
         $resolver->setRequired('translator');
     }

@@ -74,12 +74,12 @@ App\Domain\Model\Company:
                 name: id_category
                 referencedColumnName: id
                 nullable: false
-        companystatut:
+        companyStatut:
             targetEntity: CompanyStatut
             cascade: [persist]
             inversedBy: companys
             joinColumn:
-                name: id_companystatut
+                name: id_company_statut
                 referencedColumnName: id
                 nullable: false
         city:

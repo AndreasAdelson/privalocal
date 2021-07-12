@@ -27,7 +27,7 @@ App\Domain\Model\CompanyStatut:
             targetEntity: Company
             orphanRemoval: true
             cascade: [persist, remove]
-            mappedBy: companystatut
+            mappedBy: companyStatut
     uniqueConstraints:
         uniqueCompanyStatutCode:
             columns: [code]

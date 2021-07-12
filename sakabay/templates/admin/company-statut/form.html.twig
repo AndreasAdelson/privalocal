@@ -14,5 +14,5 @@
   {% else %}
     <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'company_statut_title_edit_page'|trans }}</h1>
   {% endif %}
-<form-company-statut :company-statut-id="{{ companyStatutId }}"></form-company-statut>
+<form-company-statut :company-statut-id="{{ companyStatutId }}" token="{{ csrf_token('companyStatut') }}"></form-company-statut>
 {% endblock %}

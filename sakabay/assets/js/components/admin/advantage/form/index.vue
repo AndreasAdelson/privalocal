@@ -25,7 +25,7 @@
                   id="message"
                   class="message"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('advantage.fields.message') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('advantage.fields.message') }}</label>
                   <input
                     v-model="formFields.message"
                     v-validate="'required'"
@@ -44,13 +44,13 @@
               </div>
             </div>
 
-<div class="col-6">
+            <div class="col-6">
               <div class="form-group">
                 <fieldset
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('advantage.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('advantage.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -76,7 +76,7 @@
                   id="priority"
                   class="priority"
                 >
-                  <label class="fontUbuntuItalic fontSize14">{{ this.$t('advantage.fields.priority') }}</label>
+                  <label class="fontUbuntuItalic fontSize14">{{ $t('advantage.fields.priority') }}</label>
                   <input
                     v-model="formFields.priority"
                     v-validate="'required'"
@@ -95,7 +95,14 @@
               </div>
             </div>
           </div>
-
+          <span
+            v-if="errorMessage"
+            id="error-message"
+            role="alert"
+            class="fontUbuntuItalic fontSize13 red-skb"
+          >
+            {{ errorMessage }}
+          </span>
           <div class="row my-3">
             <div class="col-6 offset-3">
               <button
@@ -103,7 +110,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.advantageId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ advantageId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -129,6 +136,10 @@
         type: Number,
         default: null,
       },
+      token: {
+        type: String,
+        default: null
+      }
     },
     data() {
       return {
@@ -138,13 +149,15 @@
         formFields: {
           message: null,
           priority: null,
-          code: null
+          code: null,
+          _token: null
         },
         formErrors: {
           message: [],
           priority: [],
-          code: null,
-        }
+          code: null
+        },
+        errorMessage: null
       };
     },
     created() {

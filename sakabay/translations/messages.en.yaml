@@ -87,6 +87,7 @@ error_application_access_message: "You do not have access to this part of the ap
 error_delete_besoin: "You cannot delete this request because one or more companies have already responded. Refresh the page."
 error_send_quote: "This request is no longer current. It seems to have expired."
 error_publish_besoin: "This request has expired."
+error_csrf_token: "Possible security issue detected. Do you really want to submit this form?"
 
 #Fonction's pages
 fonction_title_list_page: "List of functions"

@@ -43,7 +43,7 @@ class FonctionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Fonction::class,
-            'csrf_protection' => false,
+            'csrf_token_id'   => 'fonction'
         ]);
         $resolver->setRequired('translator');
     }

@@ -94,12 +94,12 @@
                       <span class="fontSize16">{{ company.address.postal_address }}</span>
                     </div>
                     <div
-                      :class="getStatutsClass(company.companystatut.code)"
+                      :class="getStatutsClass(company.company_statut.code)"
                       class="col-3"
                     >
-                      <font-awesome-icon :icon="['fas', getStatutsLabel(company.companystatut.code)[1]]" />
+                      <font-awesome-icon :icon="['fas', getStatutsLabel(company.company_statut.code)[1]]" />
 
-                      <span class="bold fontSize16">{{ getStatutsLabel(company.companystatut.code)[0] }}</span>
+                      <span class="bold fontSize16">{{ getStatutsLabel(company.company_statut.code)[0] }}</span>
                     </div>
                   </div>
 
@@ -177,7 +177,7 @@
                   </div>
                 </div>
                 <div
-                  v-if="company.companystatut.code === 'VAL'"
+                  v-if="company.company_statut.code === 'VAL'"
                   class="col-3"
                 >
                   <div
@@ -206,7 +206,7 @@
                 </div>
               </div>
               <div
-                v-if="company.companystatut.code === 'VAL'"
+                v-if="company.company_statut.code === 'VAL'"
                 class="row my-2"
               >
                 <div class="col-10 offset-1">

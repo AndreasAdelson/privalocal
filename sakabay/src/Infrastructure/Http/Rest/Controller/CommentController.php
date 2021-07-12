@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 
 final class CommentController extends AbstractFOSRestController
 {
@@ -54,7 +55,11 @@ final class CommentController extends AbstractFOSRestController
     public function createComment(Request $request)
     {
         $comment = new Comment();
-
+        if (!$this->isCsrfTokenValid('comment', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
         $formOptions = [
             'translator' => $this->translator,
         ];
@@ -69,7 +74,6 @@ final class CommentController extends AbstractFOSRestController
 
         $companyId = $comment->getCompany()->getId();
         $this->companyService->updateNotation($companyId);
-
         $ressourceLocation = $this->generateUrl('company_show', ['slug' => $comment->getCompany()->getUrlName(), 'page' => 'comments']);
         return View::create([], Response::HTTP_CREATED, ['Location' => $ressourceLocation]);
     }

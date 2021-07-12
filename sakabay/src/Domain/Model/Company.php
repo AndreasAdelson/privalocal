@@ -108,7 +108,7 @@ class Company
      * @var CompanyStatut
      *
      */
-    private $companystatut;
+    private $companyStatut;
 
     /**
      * @var Address
@@ -405,7 +405,7 @@ class Company
      */
     public function getCompanystatut()
     {
-        return $this->companystatut;
+        return $this->companyStatut;
     }
 
     /**
@@ -414,9 +414,9 @@ class Company
      *
      * @return  self
      */
-    public function setCompanystatut(CompanyStatut $companystatut)
+    public function setCompanystatut(CompanyStatut $companyStatut)
     {
-        $this->companystatut = $companystatut;
+        $this->companyStatut = $companyStatut;
         return $this;
     }
 

@@ -29,7 +29,7 @@
           v-else
           class="col-6"
         >
-          <span>Vous ne pouvez pas réaliser de commentaires pour cette entreprise étant donné qu'elle vous appartient</span>
+          <span>{{ $t('comment.your_company') }}</span>
         </div>
       </div>
       <div class="row no-gutters mx-2">
@@ -148,12 +148,11 @@
 
       <div class="row no-gutters">
         <div
-          v-for="(comment, index) in comments"
-          :id="'comment_' + index"
+          v-for="(comment, index) in printedComments"
           :key="'comment_' + index"
           class="col-12 comment-card border-bottom mx-2"
         >
-          <div class="row pt-2 mb-3">
+          <div class="row pt-2 mb-3 align-items-center">
             <div class="col-1 text-center px-0">
               <b-img
                 :src="urlImageProfil(comment)"
@@ -163,10 +162,14 @@
             </div>
             <div class="col-11">
               <div class="row justify-content-between">
-                <div class="col-2">
-                  <v-app>
+                <div
+                  class="col-2"
+                >
+                  <v-app
+                    id="rating"
+                  >
                     <v-rating
-                      :value="comment.note"
+                      v-model="comment.note"
                       class="readonly"
                       half-increments
                       readonly
@@ -189,7 +192,25 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <span class="grey-bold-skb">{{ comment.message }}</span>
+                  <div v-if="comment.isCommentTruncated && comment.message && comment.message.length > 300">
+                    <span class="grey-bold-skb">{{ comment.message|truncate(300) }}</span>
+                    <span
+                      class="link fontSize12 cursor-pointer"
+                      @click="comment.isCommentTruncated = false"
+                    >
+                      {{ $t("commons.see_more") }}
+                    </span>
+                  </div>
+                  <div v-else>
+                    <span class="grey-bold-skb">{{ comment.message }}</span>
+                    <span
+                      v-if="comment.message && comment.message.length > 300"
+                      class="link fontSize12 cursor-pointer"
+                      @click="comment.isCommentTruncated = true"
+                    >
+                      {{ $t("commons.see_less") }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -200,7 +221,7 @@
           class="mt-3"
         >
           <b-pagination
-            v-if="comments && comments.length != 0"
+            v-if="printedComments && printedComments.length != 0"
             v-model="filters.currentPage"
             :total-rows="pager.totalRows"
             :per-page="filters.perPage"
@@ -208,10 +229,10 @@
             @input="applyFilter()"
           />
         </b-col>
-        <div v-if="comments && comments.length == 0 && nbMaxComments == 0">
+        <div v-if="printedComments && printedComments.length == 0 && nbMaxComments == 0">
           <span>{{ $t('comment.no_comments') }}</span>
         </div>
-        <div v-if="comments && comments.length == 0 && nbMaxComments != 0">
+        <div v-if="printedComments && printedComments.length == 0 && nbMaxComments != 0">
           <span>{{ $t('comment.no_result_found') }}</span>
         </div>
       </div>
@@ -242,7 +263,7 @@
     data() {
       return {
         loading: false,
-        comments: null,
+        printedComments: null,
         configCheckbox: {
           className: 'fontSize18',
           lineHeight: 7,
@@ -277,7 +298,7 @@
         horribleResults: 0,
       };
     },
-    mounted() {
+    created() {
       this.applyFilter();
     },
     methods: {
@@ -304,12 +325,16 @@
       applyFilter() {
         let sentFilter = this.setFilter();
         this.loading = true;
-        this.comments = null;
+        this.printedComments = null;
         return axios.get('/api/comments', {
           params: sentFilter
         }).then(response => {
-          this.comments = _.cloneDeep(response.data);
+          let comments = _.cloneDeep(response.data);
           this.pager.totalRows = parseInt(response.headers['x-total-count']);
+          _.each(comments, comment => {
+            comment.isCommentTruncated = true;
+          });
+          this.printedComments = comments;
           if (this.filters.firstAttempt == true) {
             this.nbMaxComments = parseInt(response.headers['x-total-count']);
             this.excellentResults = parseInt(response.headers['x-excellent-count']);
@@ -334,6 +359,12 @@
         if (this.nbMaxComments !== 0) {
           this.configCheckbox[fieldName] = _.round(((nbResultsNote/nbResultMax) * 100), 0);
         } return 0;
+      },
+      toggleComment(comment, isTruncated) {
+        this.$nextTick(() => {
+          comment.isCommentTruncated = isTruncated;
+        });
+        console.log('ça à changé');
       }
     }
   };

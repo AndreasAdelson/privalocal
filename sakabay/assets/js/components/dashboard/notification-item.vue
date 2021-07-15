@@ -10,8 +10,7 @@
         <div class="col-9">
           <a
             v-if="notif.notification.link !== null"
-            href="#"
-            class="fontPoppins fontSize14"
+            class="fontPoppins fontSize14 cursor-pointer"
             @click.prevent="goToNotificationSubject()"
           >{{ notif.notification.message }}</a>
           <span
@@ -92,15 +91,17 @@
        */
       goToNotificationSubject() {
         if (this.notif.notification.link) {
-          window.location.assign(this.notif.notification.link);
-          this.markAsSeen();
+          this.markAsSeen(this.notif.notification.link);
         }
       },
 
-      markAsSeen() {
+      markAsSeen(location = '') {
         return axios.post('/notification/' + this.notif.notifiable.id + '/mark_as_seen/' + this.notif.notification.id)
           .then(r => {
             this.$emit('notification-seen');
+            if (location) {
+              window.location.assign(location);
+            }
           })
           .catch(e => {
             this.$handleError(e);

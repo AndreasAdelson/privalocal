@@ -27,6 +27,8 @@
     "n_charaters_left": "{n} character left | {n} character left | {n} characters left",
     "n_charaters_left_short_description": "{n} caractère restant for short description | {n} caractère restant for short description | {n} caractères restants for short description",
     "only_subscribed_edit": "This information is modifiable and visible only when the company is a subscriber.",
+    "see_more": "See more",
+    "see_less": "See less",
     "placeholder": {
       "search": "Whata re you looking for ?",
       "category": "Select category",

@@ -1,5 +1,10 @@
 <template>
   <div class="skb-body container-fluid">
+    <div v-show="loading">
+      <div class="loader-container-full">
+        <div class="loader" />
+      </div>
+    </div>
     <div class="row py-3 ">
       <div class="container">
         <div class="row search mb-3">
@@ -107,7 +112,7 @@
           </div>
         </div>
         <div
-          v-if="loading"
+          v-if="loading2"
           class="loader2"
         />
         <div v-else-if="companies && companies.length > 0">
@@ -183,6 +188,8 @@
         category: [],
         companies: null,
         loading: false,
+        loading2: false,
+
       };
     },
     computed: {
@@ -203,25 +210,27 @@
       },
     },
     created() {
+      this.loading = true;
       let promises = [];
       promises.push(axios.get('/api/admin/categories'));
       return Promise.all(promises).then(res => {
         this.category = res[0].data;
+        this.loading = false;
       });
     },
     methods: {
       applyFilter() {
         let sentFilter = this.setFilter();
-        this.loading = true;
+        this.loading2 = true;
         return axios.get('/api/companies', {
           params: sentFilter
         }).then(response => {
           this.companies = _.cloneDeep(response.data);
           this.pager.totalRows = parseInt(response.headers['x-total-count']);
-          this.loading = false;
+          this.loading2 = false;
         }).catch(error => {
           this.$handleError(error);
-          this.loading = false;
+          this.loading2 = false;
         });
       },
       setCity(city) {

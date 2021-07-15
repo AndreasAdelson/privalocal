@@ -27,6 +27,8 @@
     "n_charaters_left": "{n} caractère restant | {n} caractère restant | {n} caractères restants",
     "n_charaters_left_short_description": "{n} caractère restant pour la description courte | {n} caractère restant pour la description courte | {n} caractères restants pour la description courte",
     "only_subscribed_edit": "Cette information est modifiable et visible uniquement lorsque l'entreprise est abonnée.",
+    "see_more": "Voir plus",
+    "see_less": "Voir moins",
     "placeholder": {
       "search": "Que recherchez-vous ?",
       "category": "Filtrer par categorie",

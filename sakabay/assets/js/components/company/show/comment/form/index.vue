@@ -231,6 +231,7 @@
       };
     },
     created() {
+      this.loading = true;
       let promises = [];
       if(this.companyId) {
         promises.push(axios.get('/api/admin/companies/' + this.companyId));

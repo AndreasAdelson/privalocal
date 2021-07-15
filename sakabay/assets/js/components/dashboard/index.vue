@@ -102,7 +102,6 @@
                     <vuescroll :ops="opsButton">
                       <a
                         :class="notificationActive ? 'navigation-dashboard-link-active': 'navigation-dashboard-link'"
-                        href="#"
                         class="w-90"
                         @click="activeNotification()"
                       >
@@ -306,8 +305,12 @@
       }
     },
     created() {
-      this.getNotifications();
       this.getUser();
+      this.getNotifications();
+    },
+    mounted() {
+      this.$forceUpdate();
+
     },
     methods: {
       getNotifications() {
@@ -321,6 +324,7 @@
 
       onNotificationSeen(index) {
         this.notifications[index].seen = true;
+        this.$forceUpdate();
       },
 
       onNotificationUnSeen(index) {
@@ -328,7 +332,9 @@
       },
 
       onNotificationDeleted(index) {
+        this.loading = true;
         this.notifications.splice(index, 1);
+        this.loading = false;
       },
 
       sortNotifications() {

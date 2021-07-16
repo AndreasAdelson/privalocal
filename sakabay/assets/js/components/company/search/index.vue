@@ -216,6 +216,9 @@
       return Promise.all(promises).then(res => {
         this.category = res[0].data;
         this.loading = false;
+      }).catch(error => {
+        this.$handleError(error);
+        this.loading = false;
       });
     },
     methods: {

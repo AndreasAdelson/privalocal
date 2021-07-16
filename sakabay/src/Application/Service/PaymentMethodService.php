@@ -52,9 +52,6 @@ class PaymentMethodService
     public function unsetDefaultPaymentMethodByStripeId($stripePaymentMethodId): void
     {
         $paymentMethod = $this->findPaymentMethodByStripeId($stripePaymentMethodId);
-        if (!$paymentMethod) {
-            throw new EntityNotFoundException('paymentMethod with id ' . $paymentMethodId . ' does not exist!');
-        }
         $this->paymentMethodRepository->delete($paymentMethod);
 
         // $paymentMethod = $this->findPaymentMethodByStripeId($stripePaymentMethodId);

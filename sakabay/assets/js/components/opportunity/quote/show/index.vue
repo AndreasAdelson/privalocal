@@ -126,6 +126,7 @@
       :opportunity="opportunity"
       :company="company"
       :utilisateur-id="utilisateurId"
+      :token="token"
     />
   </div>
 </template>
@@ -150,6 +151,10 @@
       utilisateurId: {
         type: Number,
         default: null
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {

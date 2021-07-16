@@ -521,7 +521,7 @@ class Utilisateur implements UserInterface, EquatableInterface, NotifiableInterf
     {
         if (!$this->besoins->contains($besoin)) {
             $this->besoins[] = $besoin;
-            $besoin->setUtilisateur($this);
+            $besoin->setAuthor($this);
         }
 
         return $this;

@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('subscription.title') }}
+          {{ $t('subscription.title') }}
         </h1>
       </div>
       <div class="col-1" />
@@ -39,7 +39,7 @@
         class="col-1"
       >
         <a href="/admin/subscription/new">
-          <b-button class="button_skb">{{ this.$t('commons.create') }}</b-button>
+          <b-button class="button_skb">{{ $t('commons.create') }}</b-button>
         </a>
       </div>
     </div>
@@ -184,7 +184,7 @@
               _.sortBy(
                 _.map(subscription.advantages, 'message'), (message) => message), this.NB_MAX_DISPLAYED)
               .join('<br />')
-              + (subscription.advantages.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.et_plus', subscription.advantages.length - this.NB_MAX_DISPLAYED) : ''),
+              + (subscription.advantages.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.see_more', subscription.advantages.length - this.NB_MAX_DISPLAYED) : ''),
             actions: subscription.id,
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);

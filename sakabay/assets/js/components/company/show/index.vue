@@ -206,7 +206,7 @@
         }
       },
       getUrlParameter(sParam) {
-        var sPageURL = window.location.search.substring(1),
+        var sPageURL = window.location.search ? window.location.search.substring(1) : '',
             sURLVariables = sPageURL.split('&'),
             sParameterName,
             i;

@@ -12,7 +12,7 @@
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/company-statut/edit/' + companyStatutId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>
@@ -44,10 +44,10 @@
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.companyStatut.name.toUpperCase() }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ companyStatut.name.toUpperCase() }}</span>
           </div>
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.companyStatut.code }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ companyStatut.code }}</span>
           </div>
         </div>
       </div>
@@ -77,12 +77,11 @@
     data() {
       return {
         companyStatut: null,
-        loading: false
+        loading: true
       };
     },
     async created() {
       if (this.companyStatutId) {
-        this.loading = true;
         return axios.get('/api/admin/company-statuts/' + this.companyStatutId)
           .then(response => {
             this.companyStatut = response.data;

@@ -117,6 +117,10 @@
       modalId: {
         type: String,
         default: ''
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -126,6 +130,7 @@
           message: '',
           besoin: null,
           company: null,
+          _token: null
         },
         formErrors: {
           message: [],
@@ -181,13 +186,14 @@
       },
 
       async submitForm() {
+        this.formFields._token = _.cloneDeep(this.token);
         EventBus.$emit('answer-modal-submit-called');
         let formData = this.$getFormFieldsData(this.formFields);
         return axios.post('/api/answer', formData).then(response => {
           EventBus.$emit('answer-modal-submited', {id: this.opportunity.id, value: true});
         }).catch(e => {
           if (e.response && e.response.status && e.response.status === 400) {
-            if (e.response.headers['x-message']) {
+            if (e.response.headers && e.response.headers['x-message']) {
               this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
               this.loading = false;
             } else {

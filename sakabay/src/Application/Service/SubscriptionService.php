@@ -33,11 +33,6 @@ class SubscriptionService
         return $this->subscriptionRepository->findBy([], ['price' => 'ASC']);
     }
 
-    public function setCompanySubscription(): array
-    {
-        return $this->subscriptionRepository->setCompanySubscription();
-    }
-
     public function getSubscriptionByName(string $name)
     {
         return $this->subscriptionRepository->findOneBy(['name' => $name]);

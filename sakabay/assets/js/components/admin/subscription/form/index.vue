@@ -230,7 +230,6 @@
         this.advantages = _.cloneDeep(res[0].data);
         if (this.subscriptionId) {
           let subscription = _.cloneDeep(res[1].data);
-          console.log(subscription);
           this.$removeFieldsNotInForm(subscription, Object.keys(this.formFields));
           this.$setEditForm(subscription);
         }

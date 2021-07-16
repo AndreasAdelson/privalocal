@@ -73,7 +73,7 @@ class BesoinRepository extends AbstractRepository implements BesoinRepositoryInt
         return $qb->getQuery()->getResult();
     }
 
-    public function getBesoinAnsweredByCompany($besoinId = '', $companyId = '')
+    public function getBesoinAnsweredByCompany($besoinId = '', $companyId = ''): ?Besoin
     {
         $qb = $this->createQueryBuilder('b');
 
@@ -169,12 +169,12 @@ class BesoinRepository extends AbstractRepository implements BesoinRepositoryInt
         $qb->leftJoin('answer.company', 'answerCompany')
             ->andWhere('answerCompany.id = :companyId')
             ->setParameter('companyId', $company);
-        if ($onlyCompany === 'false') {
+        if ($onlyCompany == 'false') {
             $qb->leftJoin('b.company', 'company')
-            ->andWhere('company IS NULL');
+                ->andWhere('company IS NULL');
         } else {
             $qb->leftJoin('b.company', 'company')
-            ->andWhere('company IS NOT NULL');
+                ->andWhere('company IS NOT NULL');
         }
         if (!$isCounting) {
             $qb->addSelect('answer');

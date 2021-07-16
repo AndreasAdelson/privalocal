@@ -261,9 +261,9 @@
             if (e.response && e.response.status && e.response.status == 400) {
               if (e.response.headers['x-message']) {
                 this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
-              } else  {
-                this.$handleFormError(e.response.data);
               }
+            } else  {
+              this.$handleFormError(e.response.data);
             }
             this.loading = false;
           });

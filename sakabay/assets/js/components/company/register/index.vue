@@ -93,22 +93,18 @@
       };
     },
     created() {
-      this.getAllSubscriptions();
+      this.loading = true;
+      return axios.get('/api/subscribes')
+        .then(response => {
+          this.subscriptions = response.data;
+          this.loading = false;
+        }).catch(error => {
+          this.$handleError(error);
+          this.loading = false;
+        });
 
     },
     methods: {
-      getAllSubscriptions() {
-        this.loading = true;
-        return axios.get('/api/subscribes')
-          .then(response => {
-            this.subscriptions = response.data;
-            this.loading = false;
-          }).catch(error => {
-            this.$handleError(error);
-            this.loading = false;
-          });
-
-      },
       getImage(subscription) {
         let url = 'build/';
         if (subscription.code === 'FRE') {

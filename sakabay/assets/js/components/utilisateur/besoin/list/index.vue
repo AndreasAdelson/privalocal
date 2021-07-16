@@ -82,7 +82,7 @@
                       :modal-manage-id="MANAGE_MODAL_ID"
                       :request-quote-id="REQUEST_QUOTE_MODAL_ID"
                       @manage-modal-opened="onManagePendingService(index, pendingBesoin)"
-                      @request-quote-modal-opened="event => onResquestQuotePending(index, pendingBesoin, event)"
+                      @request-quote-modal-opened="event => onRequestQuotePending(index, pendingBesoin, event)"
                     />
                   </div>
                   <div
@@ -192,6 +192,7 @@
       :utilisateur-id="utilisateurId"
       :entity-selected="entitySelected"
       :is-company="isCompany"
+      :token="token"
     />
     <confirm-modal
       :id="REQUEST_QUOTE_MODAL_ID"
@@ -230,6 +231,10 @@
       utilisateurId: {
         type: Number,
         default: null
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -337,7 +342,7 @@
       //   this.currentExpiredId = expiredBesoinId;
       //   this.indexExpired = index;
       // },
-      onResquestQuotePending(index, pendingBesoin, event) {
+      onRequestQuotePending(index, pendingBesoin, event) {
         this.indexPending = index;
         this.currentPendingBesoinTitle = pendingBesoin.title;
         this.currentCompanyName = event.company_name;
@@ -351,9 +356,6 @@
             this.pendingBesoins[this.indexPending].answers[this.indexAnswer].request_quote = true;
             this.indexPending = null;
             this.indexAnswer = null;
-            this.loadingModal = false;
-
-          }).catch(e => {
             this.loadingModal = false;
 
           });

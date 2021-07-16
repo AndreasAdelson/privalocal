@@ -114,20 +114,6 @@ class CompanySubscription
     }
 
     /**
-     * Set })
-     *
-     * @param  int  $id  })
-     *
-     * @return  self
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * Get })
      *
      * @return  DateTime

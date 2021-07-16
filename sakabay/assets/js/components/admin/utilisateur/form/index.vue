@@ -190,8 +190,8 @@
           .then(response => {
             this.$setEditForm(response.data);
             this.loading = false;
-          }).catch(e => {
-            console.log(e);
+          }).catch(error => {
+            this.$handleError(error);
             this.loading = false;
           });
       }

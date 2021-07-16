@@ -26,9 +26,10 @@
               id="company"
               class="company"
             >
-              <label class="fontUbuntuItalic fontSize14">{{ this.$t('besoin.label.select') }}</label>
+              <label class="fontUbuntuItalic fontSize14">{{ $t('besoin.label.select') }}</label>
               <multiselect
                 v-model="formFields.company"
+                v-validate="'required'"
                 :placeholder="$t('besoin.placeholder.select')"
                 :disabled="companies.length < 0"
                 :options="companies"
@@ -50,7 +51,7 @@
                 id="title"
                 class="title"
               >
-                <label class="fontUbuntuItalic fontSize14">{{ this.$t('besoin.label.title') }}</label>
+                <label class="fontUbuntuItalic fontSize14">{{ $t('besoin.label.title') }}</label>
                 <input
                   v-model="formFields.title"
                   v-validate="'required'"
@@ -92,7 +93,14 @@
                   label="name"
                   track-by="name"
                   class="fontAlice"
+                  @select="resetSousCategorys"
                 />
+                <div
+                  v-for="errorText in formErrors.category"
+                  :key="'message_' + errorText"
+                >
+                  <span class="fontUbuntuItalic fontSize13 red-skb">{{ errorText }}</span>
+                </div>
                 <span
                   v-if="besoinId"
                   class="fontSize14 italic"
@@ -125,6 +133,12 @@
                   class="fontAlice"
                   :multiple="true"
                 />
+                <div
+                  v-for="errorText in formErrors.sousCategory"
+                  :key="'message_' + errorText"
+                >
+                  <span class="fontUbuntuItalic fontSize13 red-skb">{{ errorText }}</span>
+                </div>
                 <span
                   v-if="besoinId"
                   class="fontSize14 italic"
@@ -162,10 +176,9 @@
                 </div>
                 <div
                   v-for="errorText in formErrors.description"
-                  :key="'description_' + errorText"
-                  class="line-height-1"
+                  :key="'message_' + errorText"
                 >
-                  <span>{{ errorText }} </span>
+                  <span class="fontUbuntuItalic fontSize13 red-skb">{{ errorText }}</span>
                 </div>
               </fieldset>
             </div>
@@ -185,7 +198,7 @@
             data-toggle="modal"
             :data-target="'#' + SEND_CONFIRM_MODAL_ID"
           >
-            {{ besoinId ? this.$t('commons.edit') : this.$t('commons.create') }}
+            {{ besoinId ? $t('commons.edit') : $t('commons.create') }}
           </button>
         </div>
       </div>
@@ -199,7 +212,7 @@
             class="btn button_skb fontUbuntuItalic"
             @click="$validateForm()"
           >
-            {{ besoinId ? this.$t('commons.edit') : this.$t('commons.create') }}
+            {{ besoinId ? $t('commons.edit') : $t('commons.create') }}
           </button>
         </div>
       </div>
@@ -232,6 +245,10 @@
       besoinId: {
         type: Number,
         default: null
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -250,12 +267,13 @@
           sousCategorys: null,
           author: null,
           company: null,
+          _token: null
         },
         formErrors: {
           title: [],
           description: [],
           category: [],
-          sousCategorys: [],
+          sousCategory: [],
           company: []
         }
       };
@@ -307,6 +325,7 @@
       submitForm() {
         this.loading = true;
         this.formFields.author = _.cloneDeep(this.utilisateurId);
+        this.formFields._token = _.cloneDeep(this.token);
         if (this.formFields.company && this.formFields.company.last_name && this.formFields.company.id === this.utilisateurId) {
           this.formFields.company = null;
         }
@@ -317,10 +336,15 @@
         }).catch(e => {
           if (e.response && e.response.status && e.response.status == 400) {
             this.$handleFormError(e.response.data);
+          } else {
+            this.$handleError(e);
           }
           this.loading = false;
         });
       },
+      resetSousCategorys() {
+        this.formFields.sousCategorys = [];
+      }
     },
 
   };

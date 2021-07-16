@@ -22,28 +22,6 @@ class SousCategoryService
         $this->sousCategoryRepository = $sousCategoryRepository;
     }
 
-    public function addSousCategory(string $name, string $code)
-    {
-        $sousCategory = new SousCategory();
-        $sousCategory->setName($name);
-        $sousCategory->setCode($code);
-        $this->sousCategoryRepository->save($sousCategory);
-    }
-
-    ///Editer un SousCategory
-    public function editSousCategory(string $name, string $code, int $sousCategoryId)
-    {
-        $sousCategory = $this->sousCategoryRepository->findById($sousCategoryId);
-        $sousCategory->setName($name);
-        $sousCategory->setCode($code);
-
-        return $sousCategory;
-    }
-    // public function findOneBy(array $email): ?SousCategory
-    // {
-    //     return $this->SousCategoryRepository->findOneBy($email);
-    // }
-    /// Afficher un SousCategory
     public function getSousCategory(int $sousCategoryId): ?SousCategory
     {
         return $this->sousCategoryRepository->find($sousCategoryId);

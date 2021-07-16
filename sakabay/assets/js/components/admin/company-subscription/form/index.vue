@@ -235,17 +235,10 @@
         return moment(date).format('DD/MM/YYYY, HH:mm');
       },
       dateFormat() {
-        console.log('closed');
         if (!moment(this.formFields.dtFin).isValid()) {
           this.formFields.dtFin = moment().toDate();
         }
       },
-      input(date) {
-        console.log(Date.parse(date));
-      },
-      blur() {
-        console.log('blur');
-      }
     },
   };
 </script>

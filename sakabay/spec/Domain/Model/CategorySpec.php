@@ -2,8 +2,10 @@
 
 namespace spec\App\Domain\Model;
 
+use App\Domain\Model\Besoin;
 use App\Domain\Model\Category;
 use App\Domain\Model\Company;
+use App\Domain\Model\SousCategory;
 use PhpSpec\ObjectBehavior;
 
 class CategorySpec extends ObjectBehavior
@@ -34,5 +36,25 @@ class CategorySpec extends ObjectBehavior
         $this->getCompanys()->shouldHaveCount(1);
         $this->removeCompany($company);
         $this->getCompanys()->shouldHaveCount(0);
+    }
+
+    public function it_should_save_sous_category()
+    {
+        $sousCategory = new SousCategory();
+        $this->addSousCategory($sousCategory);
+        $this->getSousCategorys()->shouldContain($sousCategory);
+        $this->getSousCategorys()->shouldHaveCount(1);
+        $this->removeSousCategory($sousCategory);
+        $this->getSousCategorys()->shouldHaveCount(0);
+    }
+
+    public function it_should_save_besoin()
+    {
+        $besoin = new Besoin();
+        $this->addBesoin($besoin);
+        $this->getBesoins()->shouldContain($besoin);
+        $this->getBesoins()->shouldHaveCount(1);
+        $this->removeBesoin($besoin);
+        $this->getBesoins()->shouldHaveCount(0);
     }
 }

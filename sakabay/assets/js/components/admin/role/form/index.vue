@@ -25,7 +25,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('role.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('role.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -49,7 +49,7 @@
                   id="code"
                   class="code"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('role.fields.code') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('role.fields.code') }}</label>
                   <input
                     v-model="formFields.code"
                     v-validate="'required'"
@@ -140,7 +140,7 @@
                 class="btn button_skb fontUbuntuItalic"
                 @click="$validateForm()"
               >
-                {{ this.roleId ? this.$t('commons.edit') : this.$t('commons.create') }}
+                {{ roleId ? $t('commons.edit') : $t('commons.create') }}
               </button>
             </div>
           </div>
@@ -154,6 +154,7 @@
   import validatorRulesMixin from 'mixins/validatorRulesMixin';
   import adminFormMixin from 'mixins/adminFormMixin';
   import DualList from 'components/commons/dual-list';
+  import _ from 'lodash';
 
   export default {
     components: {

@@ -186,7 +186,7 @@ class Subscription
     {
         if (!$this->companySubscriptions->contains($companySubscription)) {
             $this->companySubscriptions[] = $companySubscription;
-            $companySubscription->setCompany($this);
+            $companySubscription->setSubscription($this);
         }
 
         return $this;

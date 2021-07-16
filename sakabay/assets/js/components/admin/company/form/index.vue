@@ -217,7 +217,7 @@
                   class="latitude"
                 >
                   <label class="fontUbuntuItalic fontSize14">{{ $t('company.table.fields.address.latitude') }}</label>
-                  <input
+                  <!-- <input
                     v-model="formFields.address.latitude"
                     v-validate="'required'"
                     name="latitude"
@@ -227,7 +227,7 @@
                     class="form-control"
                     :placeholder="$t('company.placeholder.latitude')"
                     onkeypress="return event.charCode === 0 || event.charCode === 45 || event.charCode === 46 || (event.charCode >= 48 && event.charCode <= 57)"
-                  >
+                  > -->
                   <div
                     v-for="errorText in formErrors.latitude"
                     :key="'code_' + errorText"
@@ -387,7 +387,8 @@
         this.loading = false;
       }).catch(e => {
         this.$handleError(e);
-      }).then(() => this.loading = false);
+        this.loading = false;
+      });
     },
     methods: {
       setCity(city) {

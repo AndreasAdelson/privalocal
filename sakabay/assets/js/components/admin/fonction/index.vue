@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('fonction.title') }}
+          {{ $t('fonction.title') }}
         </h1>
       </div>
       <div class="col-1" />
@@ -39,7 +39,7 @@
         class="col-1"
       >
         <a href="/admin/fonction/new">
-          <b-button class="button_skb">{{ this.$t('commons.create') }}</b-button>
+          <b-button class="button_skb">{{ $t('commons.create') }}</b-button>
         </a>
       </div>
     </div>
@@ -103,6 +103,7 @@
   import axios from 'axios';
   import paginationMixin from 'mixins/paginationMixin';
   import ConfirmModal from 'components/commons/confirm-modal';
+  import _ from 'lodash';
 
   export default {
     components: {

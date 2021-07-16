@@ -84,11 +84,11 @@ App\Domain\Model\Besoin:
             inversedBy: besoins
             joinTable:
                 name: besoin_sous_categories
-                joinColumn:
-                    id_sous_category:
+                joinColumns:
+                    id_besoin:
                         referencedColumnName: id
                 inverseJoinColumns:
-                    id_besoin:
+                    id_sous_category:
                         referencedColumnName: id
             nullable: false
     oneToMany:

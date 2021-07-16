@@ -106,9 +106,6 @@
         default: false
       }
     },
-    data() {
-      return {
-      };
-    },
+
   };
 </script>

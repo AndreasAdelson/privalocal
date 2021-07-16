@@ -127,7 +127,7 @@ class SubscriptionStatus
     {
         if (!$this->companySubscriptions->contains($companySubscription)) {
             $this->companySubscriptions[] = $companySubscription;
-            $companySubscription->setCompanySubscriptionstatut($this);
+            $companySubscription->setSubscriptionStatus($this);
         }
 
         return $this;

@@ -22,24 +22,6 @@ class CompanyStatutService
         $this->companyStatutRepository = $companyStatutRepository;
     }
 
-    public function addCompanyStatut(string $name, string $code)
-    {
-        $companyStatut = new CompanyStatut();
-        $companyStatut->setName($name);
-        $companyStatut->setCode($code);
-        $this->companyStatutRepository->save($companyStatut);
-    }
-
-    ///Editer un CompanyStatut
-    public function editCompanyStatut(string $name, string $code, int $companyStatutId)
-    {
-        $companyStatut = $this->companyStatutRepository->findById($companyStatutId);
-        $companyStatut->setName($name);
-        $companyStatut->setCode($code);
-
-        return $companyStatut;
-    }
-
     /// Afficher un CompanyStatut
     public function getCompanyStatut(int $companyStatutId): ?CompanyStatut
     {

@@ -8,5 +8,6 @@
  <besoin-form
  :utilisateur-id="{{ utilisateurId }}"
  :besoin-id="{{ besoinId|json_encode }}"
+ token="{{ csrf_token('besoin') }}"
  ></besoin-form>
 {% endblock %}

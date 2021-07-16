@@ -138,7 +138,7 @@
         table: {
           field: [
             { key: 'name', label: this.$t('company.table.fields.name'), sortable: true, thClass: 'tableitem' },
-            { key: 'numSiret', label: this.$t('company.fields.num_siret'), thClass: 'tableitem', class: 'col-size-10' },
+            { key: 'num_siret', label: this.$t('company.fields.num_siret'), thClass: 'tableitem', class: 'col-size-10' },
             { key: 'url_name', label: this.$t('company.table.fields.url_name'), thClass: 'tableitem' },
             { key: 'utilisateur', label: this.$t('company.table.fields.utilisateur'), thClass: 'tableitem' },
             { key: 'category', label: this.$t('company.table.fields.category'), thClass: 'tableitem' },
@@ -164,11 +164,10 @@
             codeStatut: 'VAL'
           }
         }).then(response => {
-          console.log(response.data);
           let items = _.map(response.data, company => _.assign(company, {
             name: company.name,
-            numSiret: company.num_siret,
-            urlName: company.url_name,
+            num_siret: company.num_siret,
+            url_name: company.url_name,
             utilisateur: company.utilisateur.username,
             category: company.category.name,
             subscription: this.isSubscribed(company.company_subscriptions),

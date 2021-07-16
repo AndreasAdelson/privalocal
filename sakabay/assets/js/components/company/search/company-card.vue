@@ -134,8 +134,9 @@
           } else {
             this.isSubscriptionActive = false;
           }
+        } else {
+          this.isSubscriptionActive = false;
         }
-
       },
       round(note) {
         return _.round(note, 1);

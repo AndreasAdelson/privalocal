@@ -166,7 +166,7 @@ class BesoinStatut
     {
         if (!$this->besoins->contains($besoin)) {
             $this->besoins[] = $besoin;
-            $besoin->setBesoinstatut($this);
+            $besoin->setBesoinStatut($this);
         }
 
         return $this;

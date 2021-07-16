@@ -35,7 +35,6 @@ import EditUser from './components/admin/utilisateur/form';
 import ShowUser from './components/admin/utilisateur/show';
 import EditAccount from './components/utilisateur/editAccount';
 import Home from './components/home';
-import SousNavBar from './components/commons/navBar';
 import cnsRenderUtils from './plugins/cnsRenderUtils';
 import cnsFormUtils from 'plugins/cnsFormUtils';
 import i18n from 'plugins/i18n';
@@ -68,7 +67,6 @@ import ShowCity from './components/admin/city/show';
 import ListCity from './components/admin/city';
 import moment from 'moment';
 import Dashboard from './components/dashboard';
-import Abonnement from './components/abonnement';
 import Subscription from './components/subscription';
 import AbonnementDetails from './components/subscription/details';
 import CompanyRefusedShow from './components/admin/company/refused/show';
@@ -185,7 +183,6 @@ new Vue({
   components: {
     AbonnementDetails,
     Subscription,
-    Abonnement,
     ShowCategory,
     ListCategory,
     ListCompanyStatut,
@@ -199,7 +196,6 @@ new Vue({
     ListUser,
     ShowUser,
     Home,
-    SousNavBar,
     EditAccount,
     ListFonction,
     FormFonction,

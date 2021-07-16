@@ -25,6 +25,11 @@ module.exports = {
     'semi': [2, 'always'],
     'quotes': [2, 'single', 'avoid-escape'],
     'space-before-function-paren': [2, 'never'],
+    'jest/no-disabled-tests': 'warn',
+    'jest/no-focused-tests': 'error',
+    'jest/no-identical-title': 'error',
+    'jest/prefer-to-have-length': 'warn',
+    'jest/valid-expect': 'error',
     'vue/script-indent': ['error', 2, {
       'baseIndent': 1
     }],

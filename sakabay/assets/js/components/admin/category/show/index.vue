@@ -12,7 +12,7 @@
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/category/edit/' + categoryId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>
@@ -74,11 +74,9 @@
 </template>
 <script>
   import axios from 'axios';
-  import Avatar from 'vue-avatar';
 
   export default {
     components: {
-      Avatar
     },
     props: {
       categoryId: {

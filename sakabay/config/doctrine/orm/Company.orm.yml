@@ -156,11 +156,11 @@ App\Domain\Model\Company:
             inversedBy: companys
             joinTable:
                 name: company_sous_categories
-                joinColumn:
-                    id_sous_category:
+                joinColumns:
+                    id_company:
                         referencedColumnName: id
                 inverseJoinColumns:
-                    id_company:
+                    id_sous_category:
                         referencedColumnName: id
 
 

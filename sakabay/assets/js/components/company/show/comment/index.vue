@@ -298,8 +298,8 @@
         horribleResults: 0,
       };
     },
-    created() {
-      this.applyFilter();
+    async created() {
+      await this.applyFilter();
     },
     methods: {
       urlImageProfil(comment) {
@@ -307,7 +307,7 @@
         if (comment.author_company && comment.author_company.image_profil) {
           url += '/build/images/uploads/' + comment.author_company.url_name + '/' + comment.author_company.image_profil;
         } else if (!comment.author_company && comment.utilisateur.image_profil) {
-          url += '/build/images/uploads/' + this.company.utilisateur.image_profil;
+          url += '/build/images/uploads/' + comment.utilisateur.image_profil;
         } else {
           url += '/build/logo.png';
         }
@@ -322,7 +322,7 @@
         }
         return name;
       },
-      applyFilter() {
+      async applyFilter() {
         let sentFilter = this.setFilter();
         this.loading = true;
         this.printedComments = null;
@@ -358,13 +358,14 @@
       getPercent(nbResultMax, nbResultsNote, fieldName) {
         if (this.nbMaxComments !== 0) {
           this.configCheckbox[fieldName] = _.round(((nbResultsNote/nbResultMax) * 100), 0);
-        } return 0;
+        } else {
+          this.configCheckbox[fieldName] = 0;
+        }
       },
       toggleComment(comment, isTruncated) {
         this.$nextTick(() => {
           comment.isCommentTruncated = isTruncated;
         });
-        console.log('ça à changé');
       }
     }
   };

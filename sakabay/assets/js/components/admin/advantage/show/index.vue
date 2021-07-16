@@ -12,7 +12,7 @@
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/advantage/edit/' + advantageId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <button class="button_skb">{{ $t('commons.edit') }}</button>
           </a>
         </div>
       </div>

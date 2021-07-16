@@ -2,6 +2,8 @@
 
 namespace spec\App\Domain\Model;
 
+use App\Domain\Model\Besoin;
+use App\Domain\Model\Comment;
 use App\Domain\Model\Company;
 use App\Domain\Model\Fonction;
 use App\Domain\Model\Group;
@@ -59,12 +61,14 @@ class UtilisateurSpec extends ObjectBehavior
         $this->getPlainPassword()->shouldReturn('test password');
     }
 
-    public function it_should_save_company()
+    public function it_should_add_and_remove_company()
     {
         $company = new Company();
-        $this->getCompany()->shouldReturn(null);
-        $this->setCompany($company);
-        $this->getCompany()->shouldReturn($company);
+        $this->addCompany($company);
+        $this->getCompanys()->shouldContain($company);
+        $this->getCompanys()->shouldHaveCount(1);
+        $this->removeCompany($company);
+        $this->getCompanys()->shouldHaveCount(0);
     }
 
     public function it_should_add_and_remove_groups()
@@ -242,5 +246,25 @@ class UtilisateurSpec extends ObjectBehavior
 
         $user->isEqualTo($user3) === true;
         $user->isEqualTo($user2) === false;
+    }
+
+    public function it_should_add_and_remove_besoin()
+    {
+        $besoin = new Besoin();
+        $this->addBesoin($besoin);
+        $this->getBesoins()->shouldContain($besoin);
+        $this->getBesoins()->shouldHaveCount(1);
+        $this->removeBesoin($besoin);
+        $this->getBesoins()->shouldHaveCount(0);
+    }
+
+    public function it_should_add_and_remove_comment()
+    {
+        $comment = new Comment();
+        $this->addComment($comment);
+        $this->getComments()->shouldContain($comment);
+        $this->getComments()->shouldHaveCount(1);
+        $this->removeComment($comment);
+        $this->getComments()->shouldHaveCount(0);
     }
 }

@@ -9,7 +9,7 @@
       <div class="row my-4">
         <div class="col-4">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('company.title_registered') }}
+            {{ $t('company.title_registered') }}
           </h1>
         </div>
         <div class="col-1" />
@@ -113,11 +113,11 @@
         table: {
           field: [
             { key: 'name', label: this.$t('company.table.fields.name'), sortable: true, thClass: 'tableitem' },
-            { key: 'numSiret', label: this.$t('company.fields.num_siret'), thClass: 'tableitem', class: 'col-size-10' },
+            { key: 'num_siret', label: this.$t('company.fields.num_siret'), thClass: 'tableitem', class: 'col-size-10' },
             { key: 'url_name', label: this.$t('company.table.fields.url_name'), thClass: 'tableitem' },
             { key: 'utilisateur', label: this.$t('company.table.fields.utilisateur'), thClass: 'tableitem' },
             { key: 'category', label: this.$t('company.table.fields.category'), thClass: 'tableitem' },
-            { key: 'dtCreated', label: this.$t('company.table.fields.dt_created'), thClass: 'tableitem', sortable: true },
+            { key: 'dt_created', label: this.$t('company.table.fields.dt_created'), thClass: 'tableitem', sortable: true },
             (!this.canDelete && !this.canEdit && !this.canRead) ? null : { key: 'actions', label: this.$t('commons.actions'), class: 'col-size-6', thClass: 'tableitem' },
           ],
           sortBy: 'dtCreated',
@@ -142,11 +142,11 @@
         }).then(response => {
           let items = _.map(response.data, company => _.assign(company, {
             name: company.name,
-            numSiret: company.num_siret,
-            urlName: company.url_name,
+            num_siret: company.num_siret,
+            url_name: company.url_name,
             utilisateur: company.utilisateur.username,
             category: company.category.name,
-            dtCreated: this.$getDateLabel2(company.dt_created),
+            dt_created: this.$getDateLabel2(company.dt_created),
             actions: company.id,
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);

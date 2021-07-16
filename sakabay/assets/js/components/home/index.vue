@@ -9,7 +9,7 @@
           :src="images"
           center
           alt="Center image"
-        ></b-img>
+        />
         <!-- <img :src="images.logo" alt="logo"> -->
       </b-col>
     </b-row>
@@ -17,26 +17,20 @@
 </template>
 
 <script>
-import setAreaHeightMixin from 'mixins/setAreaHeightMixin';
-export default {
-  data () {
-    return {
-      images: '/build/logo.png'
-    }
-  },
-  components: {
+  import setAreaHeightMixin from 'mixins/setAreaHeightMixin';
+  export default {
+    components: {
 
-  },
-  mixins: [
-    setAreaHeightMixin,
-  ],
-  methods: {
-    onSlideStart (slide) {
-      this.sliding = true
     },
-    onSlideEnd (slide) {
-      this.sliding = false
+    mixins: [
+      setAreaHeightMixin,
+    ],
+    data() {
+      return {
+        images: '/build/logo.png'
+      };
+    },
+    methods: {
     }
-  }
-}
+  };
 </script>

@@ -69,7 +69,7 @@ class CommentValidateType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Comment::class,
-            'csrf_token_id'   => 'comment'
+            'csrf_token_id'   => 'besoin'
         ]);
         $resolver->setRequired('translator');
     }

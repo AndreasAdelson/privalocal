@@ -55,12 +55,57 @@ class CompanyRepositorySpec extends ObjectBehavior
         $queryBuilder->select(Argument::any())->willReturn($queryBuilder);
         $queryBuilder->from(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
         $queryBuilder->leftJoin(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->where(Argument::any())->willReturn($queryBuilder);
         $queryBuilder->andWhere(Argument::any())->willReturn($queryBuilder);
         $queryBuilder->setParameter(Argument::any(), Argument::any())->willReturn($queryBuilder);
         $queryBuilder->orderBy(Argument::any(), Argument::any())->willReturn($queryBuilder);
         $queryBuilder->getQuery()->willReturn($query);
 
-        $this->getPaginatedList('id', false, '', 'test', 1, 10, 24, 12, 1)
-            ->shouldBeLike($this->paginate($queryBuilder, 10, 1));
+        $this->getPaginatedList('id', false, '', 'test', 1, 10, 24, 12, 1)->shouldBeLike($this->paginate($queryBuilder, 10, 1));
+    }
+
+    public function it_should_get_paginated_list_admin($em, QueryBuilder $queryBuilder, AbstractQuery $query)
+    {
+        $em->createQueryBuilder(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->select(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->from(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->leftJoin(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->where(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->andWhere(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->setParameter(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->orderBy(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->getQuery()->willReturn($query);
+
+        $this->getPaginatedListAdmin('id', false, '', 'test', 1, 10, 'VAL')->shouldBeLike($this->paginate($queryBuilder, 10, 1));
+    }
+
+    public function it_should_get_paginated_list_user($em, QueryBuilder $queryBuilder, AbstractQuery $query)
+    {
+        $em->createQueryBuilder(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->select(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->from(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->leftJoin(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->where(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->andWhere(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->setParameter(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->orderBy(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->getQuery()->willReturn($query);
+
+        $this->getPaginatedListUser('id', false, '', 'test', 1, 10, 24, 12)->shouldReturn(null);
+    }
+
+    public function it_should_get_company_by_user_id($em, QueryBuilder $queryBuilder, AbstractQuery $query)
+    {
+        $em->createQueryBuilder(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->select(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->from(Argument::any(), Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->leftJoin(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->where(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->andWhere(Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->setParameter(Argument::any(), Argument::any())->willReturn($queryBuilder);
+        $queryBuilder->getQuery()->willReturn($query);
+
+        $this->getCompanyByUserId('id', false)->shouldReturn(null);
+        $this->getCompanyByUserId('id', true)->shouldReturn(null);
     }
 }

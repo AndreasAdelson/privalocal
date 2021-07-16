@@ -255,9 +255,9 @@
         company: null,
         loading: true,
         validateForm: {
-          dtDebut: moment().format('YYYY/MM/DD H:m:s'),
-          dtFin: moment().format('YYYY/MM/DD H:m:s'),
-          company: new Object(),
+          dtDebut: null,
+          dtFin: null,
+          company: null,
           stripeId: null,
           _token: null
         },
@@ -294,8 +294,9 @@
             this.loading = false;
             window.location.assign(response.headers.location);
           }).catch(e => {
+            this.loading = false;
             if (e.response && e.response.status && e.response.status === 400) {
-              if (e.response.headers['x-message']) {
+              if (e.response.headers && e.response.headers['x-message']) {
                 this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
               } else {
                 this.$handleFormError(e.response.data);
@@ -303,7 +304,6 @@
             } else {
               this.$handleError(e);
             }
-            this.loading = false;
           });
       },
       declineCompany() {

@@ -120,6 +120,7 @@
                   track-by="name"
                   open-direction="below"
                   @input="getSousCategorys"
+                  @select="resetSousCategorys"
                 />
                 <div
                   v-for="errorText in formErrors.category"
@@ -427,7 +428,7 @@
       },
 
       getSousCategorys() {
-        axios.get('/api/admin/sous-categories', {
+        return axios.get('/api/admin/sous-categories', {
           params: {
             category: this.formFields.category.id
           }
@@ -468,13 +469,18 @@
             if (e.response && e.response.status && e.response.status == 400) {
               this.$handleFormError(e.response.data);
             }
+            else {
+              this.$handleError(e);
+            }
             this.loading = false;
-
           });
       },
       goBack() {
         this.$goTo(this.urlPrecedente);
       },
+      resetSousCategorys() {
+        this.formFields.sousCategorys = [];
+      }
     },
   };
 </script>

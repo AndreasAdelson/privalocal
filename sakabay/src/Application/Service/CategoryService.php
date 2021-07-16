@@ -21,24 +21,6 @@ class CategoryService
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function addCategory(string $name, string $code)
-    {
-        $category = new Category();
-        $category->setName($name);
-        $category->setCode($code);
-        $this->categoryRepository->save($category);
-    }
-
-    ///Editer un Category
-    public function editCategory(string $name, string $code, int $categoryId)
-    {
-        $category = $this->categoryRepository->findById($categoryId);
-        $category->setName($name);
-        $category->setCode($code);
-
-        return $category;
-    }
-
     /// Afficher un Category
     public function getCategory(int $categoryId): ?Category
     {

@@ -18,10 +18,10 @@
       </div>
     </div>
     <div
-      v-if="utilisateur && companies.length > 0"
+      v-if="utilisateur && companies && companies.length > 0"
       class="row"
     >
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="city"
           :button-text="$tc('dashboard.link.n_company', companies.length)"
@@ -31,7 +31,7 @@
           url="/entreprises/list"
         />
       </div>
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="gem"
           :button-text="$t('dashboard.link.subscription')"
@@ -41,17 +41,17 @@
           :disabled="!hasOneValidated"
         />
       </div>
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="copy"
           :button-text="$t('dashboard.link.opportunity')"
           class-color="flat-color-6"
           :small-text="true"
           url="/opportunities/list"
-          :disabled="!hasOneSusbcribed"
+          :disabled="!hasOneSubscribed"
         />
       </div>
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="paste"
           :button-text="$t('dashboard.link.recruit')"
@@ -62,7 +62,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="edit"
           :button-text="$t('dashboard.link.request_service')"
@@ -71,7 +71,7 @@
           :small-text="false"
         />
       </div>
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="book-open"
           :button-text="$t('dashboard.link.documents')"
@@ -79,7 +79,7 @@
           :small-text="true"
         />
       </div>
-      <div class="col-3">
+      <div class="col-md-3 col-sm-12">
         <link-item
           icon-label="address-card"
           :button-text="$t('dashboard.link.nomination')"
@@ -117,7 +117,7 @@
                       </a>
                       <!-- Subscription History bouton -->
                       <a
-                        v-if="utilisateur && utilisateur.companys.length > 0"
+                        v-if="utilisateur && utilisateur.companys && utilisateur.companys.length > 0"
                         :class="historyActive ? 'navigation-dashboard-link-active': 'navigation-dashboard-link'"
                         href="#"
                         class="w-90"
@@ -267,17 +267,19 @@
         utilisateur: null,
         notificationActive: true,
         historyActive: false,
-        hasOneSusbcribed: false
+        hasOneSubscribed: false
       };
     },
     computed: {
       numberUnseen() {
         let unseen = 0;
-        this.notifications.forEach(notif => {
-          if (!notif.seen) {
-            unseen += 1;
-          }
-        });
+        if(this.notifications.length > 0) {
+          this.notifications.forEach(notif => {
+            if (!notif.seen) {
+              unseen += 1;
+            }
+          });
+        }
         return unseen;
       },
 
@@ -297,7 +299,7 @@
         validated = _.filter(this.companies, company => {
           return company.company_statut.code === 'VAL';
         });
-        if (validated.length > 0) {
+        if (validated && validated.length > 0) {
           this.getSubscribedCompany();
           return true;
         }
@@ -332,9 +334,7 @@
       },
 
       onNotificationDeleted(index) {
-        this.loading = true;
         this.notifications.splice(index, 1);
-        this.loading = false;
       },
 
       sortNotifications() {
@@ -367,15 +367,15 @@
       },
 
       getSubscribedCompany() {
-        if (this.companySubscriptions.length > 0) {
+        if (this.companySubscriptions && this.companySubscriptions.length > 0) {
           let subscription = this.companySubscriptions.find((item) => {
             return moment(item.dt_fin, 'DD/MM/YYYY HH:mm:ss').isAfter();
           });
           if(subscription) {
-            this.hasOneSusbcribed = true;
+            this.hasOneSubscribed = true;
           }
           else {
-            this.hasOneSusbcribed = false;
+            this.hasOneSubscribed = false;
           }
         }
       }

@@ -5,7 +5,7 @@
         <div class="loader" />
       </div>
     </div>
-    <div v-else-if="!loading && company.company_statut.code === 'VAL'">
+    <div v-else-if="!loading && company.company_statut &&company.company_statut.code === 'VAL'">
       <div class="row pt-5">
         <div class="col">
           <p class="text-center">
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="!loading && company.company_statut.code === 'ENC'">
+    <div v-else-if="!loading && company.company_statut && company.company_statut.code === 'ENC'">
       <div class="row pt-5">
         <div class="col">
           <p class="text-center">
@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="!loading && company.company_statut.code === 'REF'">
+    <div v-else-if="!loading && company.company_statut && company.company_statut.code === 'REF'">
       <div
         v-if="canEdit"
         class="row mt-3 "

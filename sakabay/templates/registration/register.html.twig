@@ -55,7 +55,10 @@
             </div>
           {% endif %}
         </div>
-
+        {# <div class="form-group">
+          {{ form_row(registrationForm._token) }}
+          <input type="hidden" name="_token" value="{{ csrf_token('registration_form') }}"/>
+        </div> #}
         <div class="form-group">
           <label class="form-check-label fontUbuntuItalic">
             {{ form_widget(registrationForm.agreeTerms, {'attr': {'required': 'required' }}) }}
@@ -66,6 +69,7 @@
           <button type="submit" class="btn button_skb btn-lg fontUbuntuItalic link">{{ 'register_now'|trans }}</button>
         </div>
       <div class="text-center fontUbuntuItalic">{{ 'already_have_an_account'|trans }} <a href="#" class="link">{{ 'sign_in'|trans }}</a></div>
+      {{ form_rest(registrationForm) }}
     </form>
   </div>
 </div>

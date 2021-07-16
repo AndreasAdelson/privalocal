@@ -15,19 +15,19 @@ const CnsFormUtils = {
       keptFields.forEach(keptField => {
         finalKeptFields.push(this.$camelCaseToUnderscoreCase(keptField));
       });
-      Object.keys(entity).forEach(field => {
-        if (!finalKeptFields.includes(field)) {
-          delete entity[field];
-        }
-      });
+        Object.keys(entity).forEach(field => {
+          if (!finalKeptFields.includes(field)) {
+            delete entity[field];
+          }
+        });
     };
 
     /**
      * Complete form error when Symfony Validator throw error on forms
      * @param {object} errorsData
      */
-    Vue.prototype.$handleFormError = function(errorsData) {
-      let receivedFormError = errorsData.errors.children;
+    Vue.prototype.$handleFormError = function(data) {
+      let receivedFormError = data.errors.children;
       Object.keys(receivedFormError).forEach(field => {
         const fieldErrors = receivedFormError[field].errors;
         if (fieldErrors) {
@@ -100,6 +100,8 @@ const CnsFormUtils = {
             window.location.hash = newLocationHash;
           }
         }
+      }).catch(error => {
+        this.$handleError(error);
       });
     };
 

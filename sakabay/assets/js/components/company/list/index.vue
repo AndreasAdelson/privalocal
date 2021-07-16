@@ -87,13 +87,20 @@
                     </div>
                   </div>
                   <div class="row mb-3 justify-content-between">
-                    <div class="col-3">
+                    <div
+                      v-if="company && company.category"
+                      class="col-3"
+                    >
                       <span class="fontSize16">{{ company.category.name }}</span>
                     </div>
-                    <div class="col-3">
+                    <div
+                      v-if="company && company.address"
+                      class="col-3"
+                    >
                       <span class="fontSize16">{{ company.address.postal_address }}</span>
                     </div>
                     <div
+                      v-if="company && company.company_statut"
                       :class="getStatutsClass(company.company_statut.code)"
                       class="col-3"
                     >
@@ -132,10 +139,16 @@
                     <div class="col-3">
                       <span class="fontSize16">{{ getCreationDateLabel(company.dt_created) }}</span>
                     </div>
-                    <div class="col-3">
+                    <div
+                      v-if="company && company.address"
+                      class="col-3"
+                    >
                       <span class="fontSize16">{{ company.address.postal_code }}</span>
                     </div>
-                    <div class="col-3">
+                    <div
+                      v-if="company && company_subscriptions"
+                      class="col-3"
+                    >
                       <span class="fontSize16">{{ getSubscriptionDateLabel(company.company_subscriptions) }}</span>
                     </div>
                   </div>
@@ -168,7 +181,10 @@
                     <div class="col-3">
                       <span class="fontSize16">{{ company.num_siret }}</span>
                     </div>
-                    <div class="col-3">
+                    <div
+                      v-if="company && company.city"
+                      class="col-3"
+                    >
                       <span class="fontSize16">{{ company.city.name }}</span>
                     </div>
                     <div class="col-3">
@@ -177,7 +193,7 @@
                   </div>
                 </div>
                 <div
-                  v-if="company.company_statut.code === 'VAL'"
+                  v-if="company && company.company_statut && company.company_statut.code === 'VAL'"
                   class="col-3"
                 >
                   <div
@@ -192,7 +208,7 @@
                     </div>
                   </div>
                   <div
-                    v-if="company.sous_categorys.length != 0 "
+                    v-if="company && company.sous_categorys && company.sous_categorys.length != 0 "
                     class="row mb-2"
                   >
                     <div class="col-12">
@@ -206,7 +222,7 @@
                 </div>
               </div>
               <div
-                v-if="company.company_statut.code === 'VAL'"
+                v-if="company && company.company_statut && company.company_statut.code === 'VAL'"
                 class="row my-2"
               >
                 <div class="col-10 offset-1">
@@ -277,8 +293,8 @@
           this.sortSubscriptions();
         }
         this.loading = false;
-      }).catch(e => {
-        this.$handleError(e);
+      }).catch(error => {
+        this.$handleError(error);
         this.loading = false;
       });
     },

@@ -64,11 +64,13 @@
       v-show="customerList"
       :utilisateur-id="utilisateurId"
       :company-selected="companySelected"
+      :token="token"
     />
     <company-list
       v-show="companyList"
       :utilisateur-id="utilisateurId"
       :company-selected="companySelected"
+      :token="token"
     />
     <quote-list
       v-show="quoteList"
@@ -93,6 +95,10 @@
       utilisateurId: {
         type: Number,
         default: null
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {

@@ -56,7 +56,7 @@
                   id="email"
                   class="email"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.email') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.email') }}</label>
                   <input
                     v-model="formFields.email"
                     v-validate="'required|email'"
@@ -80,7 +80,7 @@
                   id="firstName"
                   class="firstName"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.first_name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.first_name') }}</label>
                   <input
                     v-model="formFields.firstName"
                     v-validate="'required'"
@@ -107,7 +107,7 @@
                   id="lastName"
                   class="lastName"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.last_name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.last_name') }}</label>
                   <input
                     v-model="formFields.lastName"
                     type="text"
@@ -129,7 +129,7 @@
                   id="username"
                   class="username"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.username') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.username') }}</label>
                   <input
                     v-model="formFields.username"
                     v-validate="'required_username'"
@@ -153,7 +153,7 @@
             <div class="col-6">
               <div class="row">
                 <div class="col-12">
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.password') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.password') }}</label>
                 </div>
               </div>
               <div class="row justify-content-between align-items-center">
@@ -166,7 +166,7 @@
                     class="btn fontUbuntu italic button_skb"
                     @click="changePassword()"
                   >
-                    {{ passwordActive ? this.$t('commons.close') : this.$t('commons.edit') }}
+                    {{ passwordActive ? $t('commons.close') : $t('commons.edit') }}
                   </button>
                 </div>
               </div>
@@ -183,7 +183,7 @@
                   id="first"
                   class="first"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.plain_password_first') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.plain_password_first') }}</label>
                   <input
                     v-model="formFields.plainPassword.first"
                     v-validate="'required'"
@@ -206,7 +206,7 @@
                   id="second"
                   class="second"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('user.fields.plain_password_second') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('user.fields.plain_password_second') }}</label>
                   <input
                     v-model="formFields.plainPassword.second"
                     v-validate="'required'"
@@ -232,7 +232,7 @@
                 class="btn button_skb fontUbuntu italic"
                 @click="$validateForm()"
               >
-                {{ this.$t('commons.edit') }}
+                {{ $t('commons.edit') }}
               </button>
             </div>
           </div>
@@ -245,6 +245,7 @@
   import axios from 'axios';
   import validatorRulesMixin from 'mixins/validatorRulesMixin';
   import Avatar from 'vue-avatar';
+  import _ from 'lodash';
 
   export default {
     components: {
@@ -261,17 +262,23 @@
       urlPrecedente: {
         type: String,
         default: null
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
       return {
+        loading: true,
         formFields: {
           email: null,
           firstName: null,
           lastName: null,
           username: null,
           currentPassword: null,
-          plainPassword: new Object()
+          plainPassword: new Object(),
+          _token: null
         },
         formErrors: {
           email: [],
@@ -298,8 +305,10 @@
             if (this.utilisateur.image_profil) {
               this.urlImageProfil = '/build/images/uploads/' + this.utilisateur.image_profil;
             }
+            this.loading = false;
           }).catch(e => {
-            console.log(e);
+            this.$handleError(e);
+            this.loading = false;
           });
       }
     },
@@ -312,6 +321,7 @@
       },
 
       submitForm() {
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         if (this.imageProfilSelected) {
           formData.append('file', this.imageProfilSelected);
@@ -319,10 +329,16 @@
         return axios.post('/api/utilisateur/edit/' + this.utilisateurId, formData)
           .then(response => {
             window.location.assign(response.headers.location);
+            this.loading = false;
           }).catch(e => {
             if (e.response && e.response.status && e.response.status == 400) {
               this.$handleFormError(e.response.data);
             }
+            else {
+              this.$handleError(e);
+            }
+            this.loading = false;
+
           });
       },
 

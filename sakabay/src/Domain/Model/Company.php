@@ -312,6 +312,11 @@ class Company
         return $this->id;
     }
 
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
     /**
      * Get "api_companies"
      *

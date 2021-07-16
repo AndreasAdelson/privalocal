@@ -12,7 +12,7 @@
           :icon="['fas', 'edit']"
         />
         <h1 class="text-center fontPoppins fontSize20 dashboard-title">
-          {{ $t('opportunity.quote.title') }} <span class="fontPoppins fontSize12 py-1 px-2 orange-gradiant white-skb rounded">{{ nbResult }}</span>
+          {{ $t('opportunity.quote.title') }} <span class="fontPoppins fontSize12 py-1 px-2 orange-gradiant white-skb rounded">{{ getTotalResult }}</span>
         </h1>
       </div>
     </div>
@@ -98,7 +98,7 @@
                     <span class="underline">{{ $t('opportunity.quote.company_request') }}</span>
                     <span
                       class="fontPoppins fontSize12 py-1 px-2 orange-gradiant white-skb rounded"
-                    >{{ nbResult }}</span>
+                    >{{ nbResult2 }}</span>
                   </div>
                 </div>
               </div>
@@ -192,7 +192,7 @@
         loading2: false,
         loading3: false,
         nbResult: 0,
-        nbResut2: 0,
+        nbResult2: 0,
         isScrolling: false,
         bottom: false,
         bottom2: false,
@@ -209,6 +209,9 @@
         params.company = this.companySelected.id;
         params.currentPage = this.currentPage;
         return params;
+      },
+      getTotalResult() {
+        return parseInt(this.nbResult) + parseInt(this.nbResult2);
       }
     },
     watch: {
@@ -249,7 +252,6 @@
           }));
         }
         return Promise.all(promises).then(res => {
-          this.loading = false;
           this.printedEntities = _.cloneDeep(res[0].data);
           this.printedCompanyQuote = _.cloneDeep(res[1].data);
           if (this.printedEntities.length < this.nbMaxResult) {
@@ -263,6 +265,7 @@
             this.nbResult2 = _.cloneDeep(res[3].data);
             this.firstAttempt = false;
           }
+          this.loading = false;
         }).catch(e => {
           this.$handleError(e);
           this.loading = false;
@@ -270,15 +273,18 @@
       },
       setColorCard(pendingQuote) {
         let cssClass = '';
-        if (!pendingQuote.answers[0].quote && pendingQuote.besoin_statut.code === 'PUB') {
-          cssClass = 'yellow-light-bg-skb';
-        } else if (!pendingQuote.answers[0].quote && pendingQuote.besoin_statut.code !== 'PUB') {
-          cssClass = 'blue-light-bg-skb';
-        } else if (pendingQuote.answers[0].quote) {
-          cssClass = 'green-light-bg-skb';
+        if (pendingQuote.answers && pendingQuote.answers.length > 0) {
+          if (!pendingQuote.answers[0].quote && pendingQuote.besoin_statut.code === 'PUB') {
+            cssClass = 'yellow-light-bg-skb';
+          } else if (!pendingQuote.answers[0].quote && pendingQuote.besoin_statut.code !== 'PUB') {
+            cssClass = 'blue-light-bg-skb';
+          } else if (pendingQuote.answers[0].quote) {
+            cssClass = 'green-light-bg-skb';
+          }
         }
         return cssClass;
-      }
+      },
+
     },
   };
 </script>

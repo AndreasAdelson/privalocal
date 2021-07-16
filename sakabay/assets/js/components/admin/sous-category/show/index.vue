@@ -5,14 +5,14 @@
         <div class="loader" />
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="sousCategory">
       <div
         v-if="canEdit"
         class="row mt-3 "
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/sous-category/edit/' + sousCategoryId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>

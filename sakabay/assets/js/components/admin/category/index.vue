@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('category.title') }}
+          {{ $t('category.title') }}
         </h1>
       </div>
       <div class="col-1" />
@@ -39,7 +39,7 @@
         class="col-1"
       >
         <a href="/admin/category/new">
-          <b-button class="button_skb">{{ this.$t('commons.create') }}</b-button>
+          <b-button class="button_skb">{{ $t('commons.create') }}</b-button>
         </a>
       </div>
     </div>
@@ -87,7 +87,7 @@
               </b-button>
             </b-button-group>
           </template>
-          <template #cell(sousCategorys)="data">
+          <template #cell(sous_categorys)="data">
             <div v-html="data.value" />
           </template>
         </b-table>
@@ -153,7 +153,7 @@
           field: [
             { key: 'name', label: this.$t('category.fields.name'), sortable: true, thClass: 'tableitem' },
             { key: 'code', label: this.$t('category.fields.code'), sortable: true, thClass: 'tableitem' },
-            { key: 'sousCategorys', label: this.$t('category.fields.sous_category'), sortable: false, thClass: 'tableitem' },
+            { key: 'sous_categorys', label: this.$t('category.fields.sous_category'), sortable: false, thClass: 'tableitem' },
             (!this.canDelete & !this.canEdit & !this.canRead) ? null : { key: 'actions', label: this.$t('commons.actions'), class: 'col-size-9', thClass: 'tableitem' },
           ],
           sortBy: 'code'
@@ -178,11 +178,11 @@
           let items = _.map(response.data, category => _.assign(category, {
             code: category.code,
             name: category.name,
-            sousCategorys: _.take(
+            sous_categorys: _.take(
               _.sortBy(
                 _.map(category.sous_categorys, 'name'), (name) => name), this.NB_MAX_DISPLAYED)
               .join('<br />')
-              + (category.sous_categorys.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.et_plus', category.sous_categorys.length - this.NB_MAX_DISPLAYED) : ''),
+              + (category.sous_categorys.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.see_more', category.sous_categorys.length - this.NB_MAX_DISPLAYED) : ''),
             actions: category.id,
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);

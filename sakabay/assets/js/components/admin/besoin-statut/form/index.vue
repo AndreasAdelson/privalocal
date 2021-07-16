@@ -162,9 +162,11 @@
       let promises = [];
       promises.push(axios.get(this.API_URL));
       return Promise.all(promises).then(res => {
-        let besoinStatut = res[0].data;
-        this.$removeFieldsNotInForm(besoinStatut, Object.keys(this.formFields));
-        this.$setEditForm(besoinStatut);
+        if (this.besoinStatutId) {
+          let besoinStatut = res[0].data;
+          this.$removeFieldsNotInForm(besoinStatut, Object.keys(this.formFields));
+          this.$setEditForm(besoinStatut);
+        }
         this.loading = false;
       }).catch(e => {
         this.$handleError(e);

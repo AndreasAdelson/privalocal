@@ -113,10 +113,10 @@ const CnsRenderUtils = {
       let label = '';
       if (entity) {
         if (entity.country) {
-          label += entity.country.replaceAll(/./g, '*');
+          label += entity.country.replace(/./g, '*');
         }
         if (entity.fingerprint) {
-          label += entity.fingerprint.replaceAll(/./g, '*');
+          label += entity.fingerprint.replace(/./g, '*');
         }
         if (entity.last4) {
           label += ' ' + entity.last4;
@@ -162,25 +162,24 @@ const CnsRenderUtils = {
     };
 
     Vue.prototype.$getDateLabelFromNow = function(date) {
-      return moment(date, 'DD/MM/YYYY H:m:ss').fromNow();
+      return moment(date, 'DD/MM/YYYY H:i:ss').fromNow();
       // return moment(date,'DD/MM/YYYY HH:mm:ss').format('[le] DD/MM/YYYY, [à] HH:mm');
     };
 
     Vue.prototype.$getDateLabel = function(date) {
-      return moment(date, 'DD/MM/YYYY H:m:ss').format('DD/MM/YYYY [à] H:mm');
+      return moment(date, 'DD/MM/YYYY H:i:ss').format('DD/MM/YYYY [à] H:mm');
     };
 
     Vue.prototype.$getDateLabel2 = function(date) {
-      return moment(date, 'DD/MM/YYYY H:m:ss').format('DD/MM/YYYY H:mm');
+      return moment(date, 'DD/MM/YYYY H:i:ss').format('DD/MM/YYYY H:mm');
     };
 
     Vue.prototype.$getDateLabelForComments = function(date) {
-      return moment(date, 'DD/MM/YYYY H:m:ss').format('LL');
+      return moment(date, 'DD/MM/YYYY H:i:ss').format('LL');
     };
 
     Vue.prototype.$capitalise = function(text) {
       if (typeof text !== 'string') {
-        console.log('not a string');
         return '';
       }
       return text.charAt(0).toUpperCase() + text.slice(1);

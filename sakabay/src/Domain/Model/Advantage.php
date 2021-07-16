@@ -165,7 +165,7 @@ class Advantage
     {
         if (!$this->subscriptions->contains($subscription)) {
             $this->subscriptions[] = $subscription;
-            $subscription->setAdvantage($this);
+            $subscription->addAdvantage($this);
         }
 
         return $this;
@@ -175,7 +175,7 @@ class Advantage
     {
         if ($this->subscriptions->contains($subscription)) {
             $this->subscriptions->removeElement($subscription);
-            $group->removeAdvantage($this);
+            $subscription->removeAdvantage($this);
         }
 
         return $this;

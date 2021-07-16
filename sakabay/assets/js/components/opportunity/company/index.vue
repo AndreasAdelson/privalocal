@@ -66,10 +66,10 @@
     </div>
     <answer-opportunity-modal
       :opportunity="currentOpportunity"
-      :opportunity-title="currentOpportunity ? currentOpportunity.title : null"
       :company="companySelected"
       :company-name="companySelected ? companySelected.name : null"
       :modal-id="MODAL_ID"
+      :token="token"
       @cancel-form="currentOpportunity = new Object()"
     />
   </div>
@@ -98,6 +98,10 @@
         type: Object,
         default: null
       },
+      token: {
+        type: String,
+        default: ''
+      }
 
     },
 

@@ -9,5 +9,6 @@
 url-precedente="{{ urlPrecedente }}"
 :company-url-name="{{ companyUrlName|json_encode }}"
 :is-subscription-active="{{ isSubscriptionActive|json_encode }}"
+token="{{ csrf_token('company') }}"
 ></company-edit>
 {% endblock %}

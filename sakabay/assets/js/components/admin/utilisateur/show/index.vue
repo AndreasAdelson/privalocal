@@ -5,14 +5,14 @@
         <div class="loader" />
       </div>
     </div>
-    <div v-else>
+    <div v-else-if="utilisateur">
       <div
         v-if="canEdit"
         class="row mt-3 "
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/utilisateur/edit/' + utilisateurId"
           >
-            <b-button class="pull-right  button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="pull-right  button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>
@@ -37,14 +37,14 @@
         <div class="row my-2">
           <div class="col-6">
             <b-img
-              v-if="this.utilisateur && this.utilisateur.image_profil != null"
+              v-if="utilisateur && utilisateur.image_profil != null"
               class="rounded-circle logo-size-75"
               :src="urlImageProfil"
             />
             <avatar
               v-else
               class="p-0"
-              :username="this.utilisateur && this.utilisateur.first_name + ' ' + this.utilisateur.last_name"
+              :username="utilisateur && utilisateur.first_name + ' ' + utilisateur.last_name"
               :size="75"
             />
           </div>
@@ -59,10 +59,10 @@
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.utilisateur.last_name.toUpperCase() }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ utilisateur.last_name.toUpperCase() }}</span>
           </div>
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.utilisateur.first_name }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ utilisateur.first_name }}</span>
           </div>
         </div>
         <div class="row">
@@ -75,10 +75,10 @@
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.utilisateur.email }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ utilisateur.email }}</span>
           </div>
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.utilisateur.username.toUpperCase() }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ utilisateur.username.toUpperCase() }}</span>
           </div>
         </div>
       </div>

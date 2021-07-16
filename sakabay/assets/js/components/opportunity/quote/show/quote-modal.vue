@@ -146,6 +146,10 @@
       utilisateurId: {
         type: Number,
         default: null
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -153,7 +157,8 @@
         loading: false,
         CONFIRM_MODAL_ID: 'ANSWER_OPPORTUNITY_MODAL',
         formFields: {
-          messageEmail: ''
+          messageEmail: '',
+          _token: null
         },
         formErrors: {
           messageEmail: [],
@@ -216,6 +221,7 @@
         this.$removeFormErrors();
         EventBus.$emit('answer-modal-submit-called');
         this.formFields.utilisateur = _.cloneDeep(this.utilisateurId);
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         if (this.quoteDocumentSelected) {
           formData.append('file', this.quoteDocumentSelected);

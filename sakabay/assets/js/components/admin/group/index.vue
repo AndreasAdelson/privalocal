@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('group.title') }}
+          {{ $t('group.title') }}
         </h1>
       </div>
       <div class="col-1" />
@@ -39,7 +39,7 @@
         class="col-1"
       >
         <a href="/admin/group/new">
-          <b-button class="button_skb">{{ this.$t('commons.create') }}</b-button>
+          <b-button class="button_skb">{{ $t('commons.create') }}</b-button>
         </a>
       </div>
     </div>
@@ -186,12 +186,12 @@
               _.sortBy(
                 _.map(group.roles, 'name'), (name) => name), this.NB_MAX_DISPLAYED)
               .join('<br />')
-              + (group.roles.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.et_plus', group.roles.length - this.NB_MAX_DISPLAYED) : ''),
+              + (group.roles.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.see_more', group.roles.length - this.NB_MAX_DISPLAYED) : ''),
             utilisateurs: _.take(
               _.sortBy(
                 _.map(group.utilisateurs, 'username'), (username) => username), this.NB_MAX_DISPLAYED)
               .join('<br />')
-              + (group.utilisateurs.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.et_plus', group.utilisateurs.length - this.NB_MAX_DISPLAYED) : ''),
+              + (group.utilisateurs.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.see_more', group.utilisateurs.length - this.NB_MAX_DISPLAYED) : ''),
             actions: group.id,
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);

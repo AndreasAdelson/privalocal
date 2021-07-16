@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('role.title') }}
+          {{ $t('role.title') }}
         </h1>
       </div>
       <div class="col-1" />
@@ -39,7 +39,7 @@
         class="col-1"
       >
         <a href="/admin/role/new">
-          <b-button class="button_skb">{{ this.$t('commons.create') }}</b-button>
+          <b-button class="button_skb">{{ $t('commons.create') }}</b-button>
         </a>
       </div>
     </div>
@@ -181,7 +181,7 @@
               _.sortBy(
                 _.map(role.fonctions, 'description'), (description) => description), this.NB_MAX_DISPLAYED)
               .join('<br />')
-              + (role.fonctions.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.et_plus', role.fonctions.length - this.NB_MAX_DISPLAYED) : ''),
+              + (role.fonctions.length > this.NB_MAX_DISPLAYED ? '<br />' + this.$tc('commons.see_more', role.fonctions.length - this.NB_MAX_DISPLAYED) : ''),
             actions: role.id,
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);

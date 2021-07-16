@@ -171,7 +171,7 @@ class NotificationFactory
         $notification->setSubject($subject);
         $notification->setMessage($message);
         if ($redirect) {
-            $notification->setLink(parse_url($redirect, PHP_URL_PATH));
+            $notification->setLink($redirect);
         }
 
         $this->manager->addNotification($users, $notification, true);

@@ -139,7 +139,7 @@ class CompanyRepository extends AbstractRepository implements CompanyRepositoryI
         $qb->leftJoin('c.utilisateur', 'utilisateur')
             ->andWhere('utilisateur.id = :utilisateurId')
             ->setParameter('utilisateurId', $utilisateur);
-        if ($onlySubscribed === 'true') {
+        if ($onlySubscribed == 'true') {
             $today = \DateTime::createFromFormat("Y-m-d H:i:s", date("Y-m-d H:m:s"));
             $qb->leftJoin('c.companySubscriptions', 'companySubscription')
                 ->andWhere('companySubscription.dtFin >= :today')

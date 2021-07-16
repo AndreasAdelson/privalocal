@@ -70,6 +70,7 @@
       :company="companySelected"
       :company-name="companySelected ? companySelected.name : null"
       :modal-id="MODAL_ID"
+      :token="token"
       @cancel-form="currentOpportunity = new Object()"
     />
   </div>
@@ -98,6 +99,10 @@
         type: Object,
         default: null
       },
+      token: {
+        type: String,
+        default: ''
+      }
     },
 
     data() {
@@ -161,6 +166,7 @@
           return opportunity.id === event.id;
         });
         await this.$nextTick(() => {
+          console.log(index);
           this.printedEntities[index].isAnswered = event.value;
           this.printedEntities[index].answers.push({
             request_quote: false

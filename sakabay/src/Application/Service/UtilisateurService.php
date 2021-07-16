@@ -22,30 +22,6 @@ class UtilisateurService
         $this->utilisateurRepository = $utilisateurRepository;
     }
 
-    // public function addUtilisateur(string $email, string $firstName, string $password, string $lastName)
-    // {
-    //     $utilisateur = new Utilisateur();
-    //     $utilisateur->setEmail($email);
-    //     $utilisateur->setConsigne($consigne);
-    //     $this->utilisateurRepository->save($utilisateur);
-    // }
-
-    ///Editer un utilisateur
-    public function editUtilisateur(string $email, string $firstName, string $lastName, string $username, int $utilisateurId)
-    {
-        $utilisateur = $this->utilisateurRepository->findById($utilisateurId);
-        $utilisateur->setEmail($email);
-        $utilisateur->setFirstName($firstName);
-        $utilisateur->setLastName($lastName);
-        $utilisateur->setUsername($username);
-
-        return $utilisateur;
-    }
-
-    // public function findOneBy(array $email): ?Utilisateur
-    // {
-    //     return $this->utilisateurRepository->findOneBy($email);
-    // }
     /// Afficher un utilisateur
     public function getUtilisateur(int $utilisateurId): ?Utilisateur
     {

@@ -25,16 +25,16 @@
   </div>
 </template>
 <script>
-export default {
-  props: {
-    company: {
-      type: Object,
-      default: null
-    },
-    isSubscriptionActive: {
-      type: Boolean,
-      default: false
+  export default {
+    props: {
+      company: {
+        type: Object,
+        default: null
+      },
+      isSubscriptionActive: {
+        type: Boolean,
+        default: false
+      }
     }
-  }
-};
+  };
 </script>

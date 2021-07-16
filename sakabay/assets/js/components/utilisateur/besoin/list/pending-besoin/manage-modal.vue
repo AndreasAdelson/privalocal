@@ -242,6 +242,10 @@
       isCompany: {
         type: Boolean,
         default: null
+      },
+      token: {
+        type: String,
+        default: ''
       }
     },
     data() {
@@ -258,7 +262,9 @@
             note: null,
             authorCompany: null,
             utilisateur: null,
-          }
+            _token: null
+          },
+          _token: null
         },
         formErrors: {
           besoinStatut: [],
@@ -305,8 +311,8 @@
     },
     methods: {
       resetForm() {
-        this.$removeFormErrors();
         setTimeout(() => {
+          this.$removeFormErrors();
           this.loading = false;
           this.formFields = _.cloneDeep(this.emptyFormFields);
           this.$emit('cancel-form');
@@ -316,11 +322,13 @@
       onCancelButton() {
         this.resetForm();
       },
+
       archiveBesoin() {
         if (this.formFields.comment.note && this.companySelected) {
           this.formFields.comment.besoin = _.cloneDeep(this.besoin);
           this.formFields.comment.utilisateur = this.utilisateurId;
           this.formFields.comment.company = _.cloneDeep(this.companySelected);
+          this.formFields.comment._token = _.cloneDeep(this.token);
           if (this.isCompany) {
             this.formFields.comment.authorCompany = _.cloneDeep(this.entitySelected);
           }
@@ -333,18 +341,18 @@
           this.loading = false;
         }).catch(e => {
           if (e.response && e.response.status && e.response.status === 400) {
-            if (e.response.headers['x-message']) {
+            if (e.response.headers && e.response.headers['x-message']) {
               this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
             } else {
               this.$handleFormError(e.response.data);
-              this.loading = false;
             }
           } else {
             this.$handleError(e);
-            this.loading = false;
           }
+          this.loading = false;
         });
       },
+
       expiratedBesoin() {
         let formData = this.$getFormFieldsData(this.formFields);
         this.loading = true;
@@ -356,44 +364,32 @@
           if (e.response && e.response.status && e.response.status === 400) {
             if (e.response.headers['x-message']) {
               this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
-              this.loading = false;
             } else {
               this.$handleFormError(e.response.data);
-              this.loading = false;
-
             }
           } else {
             this.$handleError(e);
-            this.loading = false;
-
           }
+          this.loading = false;
         });
       },
+
       deleteBesoin() {
         this.loading = true;
-        axios.delete('/api/besoins/' + this.besoin.id)
+        return axios.delete('/api/besoins/' + this.besoin.id)
           .then(res => {
             EventBus.$emit('besoin-deleted');
             $('#' + this.id).modal('hide');
             this.loading = false;
-
           })
           .catch(e => {
-            if (e.response && e.response.status && e.response.status === 400) {
-              if (e.response.headers['x-message']) {
-                this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
-                this.loading = false;
-              } else {
-                this.$handleFormError(e.response.data);
-                this.loading = false;
-              }
-            } else {
-              this.$handleError(e);
-              this.loading = false;
-            }
+            this.$handleError(e);
+            this.loading = false;
           });
       },
+
       submitForm() {
+        this.formFields._token = _.cloneDeep(this.token);
         this.$removeFormErrors();
         if (this.formFields.besoinStatut && this.formFields.besoinStatut.code === 'ARC') {
           this.archiveBesoin();
@@ -403,11 +399,6 @@
           this.expiratedBesoin();
         }
       },
-
-      updateInput(value) {
-        console.log(value);
-      }
-
     },
 
   };

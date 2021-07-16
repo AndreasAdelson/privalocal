@@ -57,7 +57,7 @@
                   id="name"
                   class="name"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.fields.name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.fields.name') }}</label>
                   <input
                     v-model="formFields.name"
                     v-validate="'required'"
@@ -82,7 +82,7 @@
                   id="numSiret"
                   class="numSiret"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.fields.num_siret') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.fields.num_siret') }}</label>
                   <input
                     v-model="formFields.numSiret"
                     v-validate="'required'"
@@ -110,7 +110,7 @@
                   id="category"
                   class="category"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.category') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.category') }}</label>
 
                   <multiselect
                     v-model="formFields.category"
@@ -141,7 +141,7 @@
                   id="urlName"
                   class="urlName"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.url_name') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.url_name') }}</label>
                   <input
                     v-model="formFields.urlName"
                     v-validate="'required_urlName'"
@@ -169,7 +169,7 @@
                   id="postalAddress"
                   class="postalAddress"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.address.postal_address') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.address.postal_address') }}</label>
                   <input
                     v-model="formFields.address.postalAddress"
                     v-validate="'required'"
@@ -199,7 +199,7 @@
                   id="postalCode"
                   class="postalCode"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.address.postal_code') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.address.postal_code') }}</label>
                   <input
                     v-model="formFields.address.postalCode"
                     v-validate="'required'"
@@ -262,7 +262,7 @@
                 id="city"
                 class="city"
               >
-                <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.city') }}</label>
+                <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.city') }}</label>
                 <autocomplete
                   ref="autocomplete"
                   v-model="formFields.city"
@@ -295,7 +295,7 @@
                   id="sousCategory"
                   class="sousCategory"
                 >
-                  <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.sous_category') }}</label>
+                  <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.sous_category') }}</label>
 
                   <multiselect
                     v-model="formFields.sousCategorys"
@@ -329,7 +329,7 @@
                 id="descriptionClean"
                 class="descriptionClean"
               >
-                <label class="fontUbuntuItalic fontSize16">{{ this.$t('company.table.fields.description') }}</label>
+                <label class="fontUbuntuItalic fontSize16">{{ $t('company.table.fields.description') }}</label>
 
                 <vue-editor
                   v-if="isSubscriptionActive"
@@ -382,7 +382,7 @@
                 class="btn button_skb fontUbuntu italic"
                 @click="$validateForm()"
               >
-                {{ this.$t('commons.edit') }}
+                {{ $t('commons.edit') }}
               </button>
             </div>
           </div>
@@ -420,6 +420,10 @@
       isSubscriptionActive: {
         type: Boolean,
         default: false
+      },
+      token: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -451,7 +455,8 @@
           descriptionFull: null,
           descriptionClean: null,
           imageProfil: null,
-          sousCategorys: null
+          sousCategorys: null,
+          _token: null
         },
         formErrors: {
           name: [],
@@ -494,7 +499,7 @@
     watch: {
       fullDescription(newValue) {
         if (newValue != this.currentFullDescription) {
-          let cleanText = document.getElementsByClassName('ql-editor').item(0).textContent;
+          let cleanText = (document.getElementsByClassName('ql-editor') && document.getElementsByClassName('ql-editor').item(0)) ? document.getElementsByClassName('ql-editor').item(0).textContent : newValue;
           this.formFields.descriptionClean = cleanText.replace(/\n/g, ' ');
         }
       },
@@ -558,8 +563,8 @@
           if (response.data.features) {
             this.$set(this.formFields.address, 'longitude', response.data.features[0].geometry.coordinates[0]);
             this.$set(this.formFields.address, 'latitude', response.data.features[0].geometry.coordinates[1]);
-            this.position.lat = response.data.features[0].geometry.coordinates[1];
             this.position.lng = response.data.features[0].geometry.coordinates[0];
+            this.position.lat = response.data.features[0].geometry.coordinates[1];
           }
           this.loadingMap = false;
         }).catch(e => {
@@ -581,7 +586,7 @@
 
       submitForm() {
         this.loading = true;
-        if (this.position.lat !== this.formFields.address.latitude && this.position.ngt !== this.formFields.address.longitude) {
+        if (this.position.lat !== this.formFields.address.latitude && this.position.lng !== this.formFields.address.longitude) {
           this.formFields.address.longitude = this.position.lng.toFixed(6);
           this.formFields.address.latitude = this.position.lat.toFixed(6);
         }
@@ -591,20 +596,21 @@
         }
 
         this.formFields.utilisateur = _.cloneDeep(this.utilisateurId);
+        this.formFields._token = _.cloneDeep(this.token);
         let formData = this.$getFormFieldsData(this.formFields);
         if (this.imageProfilSelected) {
           formData.append('file', this.imageProfilSelected);
         }
         return axios.post('/api/companies/edit/' + this.companyUrlName, formData)
           .then(response => {
-            this.loading = false;
             window.location.assign(response.headers.location);
           }).catch(e => {
             if (e.response && e.response.status && e.response.status == 400) {
               this.$handleFormError(e.response.data);
+            } else {
+              this.$handleError(e);
             }
             this.loading = false;
-
           });
       },
       goBack() {

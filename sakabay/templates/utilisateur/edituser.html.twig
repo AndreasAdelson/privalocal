@@ -6,5 +6,7 @@
 <h1 class="fontUbuntuItalic orange-skb text-center p-1">{{ 'edit_account'|trans }}</h1>
 <edit-account
 :utilisateur-id="{{ utilisateurId }}"
-url-precedente="{{ urlPrecedente }}"></edit-account>
+url-precedente="{{ urlPrecedente }}"
+token="{{csrf_token('utilisateur')}}"
+></edit-account>
 {% endblock %}

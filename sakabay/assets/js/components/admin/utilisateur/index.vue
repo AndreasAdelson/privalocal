@@ -8,7 +8,7 @@
     <div class="row my-4">
       <div class="col-4">
         <h1 class="fontUbuntuItalic orange-skb">
-          {{ this.$t('user.title') }}
+          {{ $t('user.title') }}
         </h1>
       </div>
       <div class="col-2">
@@ -113,6 +113,7 @@
   import axios from 'axios';
   import paginationMixin from 'mixins/paginationMixin';
   import ConfirmModal from 'components/commons/confirm-modal';
+  import _ from 'lodash';
 
   export default {
     components: {
@@ -146,8 +147,8 @@
           field: [
             { key: 'email', label: this.$t('user.fields.email'), sortable: true, thClass: 'tableitem' },
             { key: 'username', label: this.$t('user.fields.username'), sortable: true, thClass: 'tableitem' },
-            { key: 'lastName', label: this.$t('user.fields.last_name'), sortable: true, thClass: 'tableitem' },
-            { key: 'firstName', label: this.$t('user.fields.first_name'), sortable: true, thClass: 'tableitem' },
+            { key: 'last_name', label: this.$t('user.fields.last_name'), sortable: true, thClass: 'tableitem' },
+            { key: 'first_name', label: this.$t('user.fields.first_name'), sortable: true, thClass: 'tableitem' },
             (!this.canRead && !this.canEdit && !this.canDelete) ? null : { key: 'actions', label: this.$t('commons.actions'), class: 'col-size-9', thClass: 'tableitem' },
           ],
           sortBy: 'lastName'
@@ -172,8 +173,8 @@
             email: utilisateur.email,
             username: utilisateur.username,
             actions: utilisateur.id,
-            lastName: utilisateur.last_name,
-            firstName: utilisateur.first_name
+            last_name: utilisateur.last_name,
+            first_name: utilisateur.first_name
           }));
           this.pager.totalRows = parseInt(response.headers['x-total-count']);
           this.loading = false;

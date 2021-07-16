@@ -12,7 +12,7 @@
       >
         <div class="col-6">
           <h1 class="fontUbuntuItalic orange-skb">
-            {{ this.$t('commons.detail') }}
+            {{ $t('commons.detail') }}
           </h1>
         </div>
         <div class="col-6 justify-content-end">
@@ -20,7 +20,7 @@
             class="float-right"
             :href="'/admin/besoinstatut/edit/' + besoinStatutId"
           >
-            <b-button class="button_skb">{{ this.$t('commons.edit') }}</b-button>
+            <b-button class="button_skb">{{ $t('commons.edit') }}</b-button>
           </a>
         </div>
       </div>
@@ -36,18 +36,18 @@
       <div class="register-card mt-3 w-100 h-100">
         <div class="row">
           <div class="col-6">
-            <span class="fontPatua fontSize20">{{ $t('besoinStatut.fields.name') }}</span>
+            <span class="fontPatua fontSize20">{{ $t('besoin_statut.fields.name') }}</span>
           </div>
           <div class="col-6">
-            <span class="fontPatua fontSize20">{{ $t('besoinStatut.fields.code') }}</span>
+            <span class="fontPatua fontSize20">{{ $t('besoin_statut.fields.code') }}</span>
           </div>
         </div>
         <div class="row mb-2">
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.besoinStatut.name.toUpperCase() }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ besoinStatut.name.toUpperCase() }}</span>
           </div>
           <div class="col-6">
-            <span class="fontHelveticaOblique fontSize18">{{ this.besoinStatut.code }}</span>
+            <span class="fontHelveticaOblique fontSize18">{{ besoinStatut.code }}</span>
           </div>
         </div>
       </div>
@@ -77,12 +77,11 @@
     data() {
       return {
         besoinStatut: null,
-        loading: false
+        loading: true
       };
     },
     async created() {
       if (this.besoinStatutId) {
-        this.loading = true;
         return axios.get('/api/admin/besoin-statuts/' + this.besoinStatutId)
           .then(response => {
             this.besoinStatut = response.data;

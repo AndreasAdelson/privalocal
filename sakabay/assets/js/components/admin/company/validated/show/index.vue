@@ -179,7 +179,7 @@
     data() {
       return {
         company: null,
-        loading: false,
+        loading: true,
         companySubscriptions: []
       };
     },

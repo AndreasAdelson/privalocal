@@ -21,6 +21,8 @@ use Doctrine\ORM\EntityNotFoundException;
 use Exception;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -185,30 +187,57 @@ final class CompanySubscriptionController extends AbstractFOSRestController
 
     /**
      * @Rest\View(serializerGroups={"api_company_subscriptions"})
-     * @Rest\Get("intent/{companyId}")
+     * @Rest\Get("setup-intent/{companyId}")
      *
      * @return View
      */
-    public function getStripeIntentByCompany(int $companyId): View
+    public function getStripeSetupIntentByCompany(int $companyId): View
     {
         $company = $this->companyService->getCompany($companyId);
-        // if (empty($company)) {
-
-        // }
         $stripe = new StripeClient($this->getParameter('secret_key'));
         $customer = $this->getStripeCustomer($company, $stripe);
-        if (!empty($customer)) {
-            try {
-                $setupIntent = $stripe->setupIntents->create([
-                    'customer' => $customer['id'],
-                    'payment_method_types' => ['sepa_debit']
-                ]);
-            } catch (Exception $e) {
-                return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
+        try {
+            $setupIntent = $stripe->setupIntents->create([
+                'customer' => $customer['id'],
+                'payment_method_types' => ['sepa_debit']
+            ]);
+        } catch (Exception $e) {
+            return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return View::create($setupIntent->client_secret, Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\View(serializerGroups={"api_company_subscriptions"})
+     * @Rest\Get("intent/{companyId}")
+     * @QueryParam(name="price_id",
+     *             default="",
+     *             description="stripe id du prix de l'abonnement"
+     * )
+     *
+     * @return View
+     */
+    public function getStripeIntentByCompany(int $companyId, ParamFetcher $paramFetcher): View
+    {
+        $company = $this->companyService->getCompany($companyId);
+        $stripe = new StripeClient($this->getParameter('secret_key'));
+        $customer = $this->getStripeCustomer($company, $stripe);
+        $stripePriceId = $paramFetcher->get('price_id');
+        $price = $this->subscriptionService->getSubscriptionByStripeId($stripePriceId)->getPrice();
+        try {
+            $intent = $stripe->paymentIntents->create([
+                'amount' => $price * 100,
+                'currency' => 'eur',
+                'payment_method_types' => ['card'],
+                'customer' => $customer['id'],
+                'setup_future_usage' => 'on_session'
+            ]);
+        } catch (Exception $e) {
+            return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return View::create($intent->client_secret, Response::HTTP_OK);
     }
 
     /**
@@ -231,6 +260,8 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         $request->request->remove('subscription');
         $dtStart = $request->request->get('dtStart');
         $request->request->remove('dtStart');
+        $type = $request->request->get('type');
+        $request->request->remove('type');
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
         $priceStripeId = $subscription->getStripeId();
         $company = $this->companyService->getCompany($companyId);
@@ -248,9 +279,16 @@ final class CompanySubscriptionController extends AbstractFOSRestController
             // SetPaymentMethod For company
             $paymentMethodRetrieved = $stripe->paymentMethods->retrieve($stripeId);
             $paymentMethod = new PaymentMethod();
-            $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
-            $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
-            $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
+            if ($type === 'iban') {
+                $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
+                $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
+                $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
+            } else if ($type === 'card') {
+                $request->request->set('last4', $paymentMethodRetrieved['card']['last4']);
+                $request->request->set('fingerprint', $paymentMethodRetrieved['card']['fingerprint']);
+                $request->request->set('country', $paymentMethodRetrieved['card']['country']);
+            }
+
             $paymentMethod->setDefaultMethod(true);
             $formOptions = ['translator' => $this->translator];
             $form = $this->createForm(PaymentMethodType::class, $paymentMethod, $formOptions);
@@ -289,7 +327,7 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
         if ($requestDtStart) {
             $dtStart = new DateTime();
-            $dtStart->setTimestamp($request->request->get('dtStart'));
+            $dtStart->setTimestamp($requestDtStart);
             $dtStart = $dtStart->getTimestamp();
         }
 
@@ -345,6 +383,7 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         $subscriptionStripeId = $activeSubscription->getStripeId();
         $stripe = new StripeClient($this->getParameter('secret_key'));
         $canceledSubscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatusByCode('ANN');
+
         try {
             $subscription = $stripe->subscriptions->retrieve($subscriptionStripeId);
             $subscription->cancel();
@@ -471,13 +510,16 @@ final class CompanySubscriptionController extends AbstractFOSRestController
     private function createStripeSubscription($stripe, $customer, $priceStripeId, $dtStart)
     {
         if (!empty($dtStart)) {
+            $dtStartUnix = new DateTime();
+            $dtStartUnix->setTimestamp($dtStart);
+            $dtStartUnix = $dtStartUnix->getTimestamp();
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer['id'],
                 'items' => [[
                     'price' => $priceStripeId,
                 ]],
                 'expand' => ['latest_invoice.payment_intent'],
-                'trial_end' => $dtStart
+                'trial_end' => $dtStartUnix
             ]);
         } else {
             $subscription = $stripe->subscriptions->create([

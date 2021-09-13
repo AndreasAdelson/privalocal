@@ -43,6 +43,11 @@ class SubscriptionService
         return $this->subscriptionRepository->findOneBy(['code' => $code]);
     }
 
+    public function getSubscriptionByStripeId(string $stripeId)
+    {
+        return $this->subscriptionRepository->findOneBy(['stripeId' => $stripeId]);
+    }
+
     public function deleteSubscription(int $subscriptionId): void
     {
         $subscription = $this->subscriptionRepository->find($subscriptionId);

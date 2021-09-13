@@ -22,6 +22,7 @@ $grey_light_color: #e5e5e5;
 $grey_light_2_color: #a2acba;
 $grey: #999;
 $grey_body: #f1f1f1;
+$grey_body_bold: #f7f7f7;
 $grey_icon: #c5c9cc;
 
 $yellow_light_color: #f2d785;
@@ -1543,6 +1544,13 @@ ul.social-footer2 li a {
 
 .card-skb {
   background-color: $white_color;
+  border-bottom: 1px solid $grey_body;
+  padding-bottom: 0.6rem;
+  padding-top: 0.6rem;
+}
+
+.card-skb2 {
+  background-color: $grey_body_bold;
   border-bottom: 1px solid $grey_body;
   padding-bottom: 0.6rem;
   padding-top: 0.6rem;

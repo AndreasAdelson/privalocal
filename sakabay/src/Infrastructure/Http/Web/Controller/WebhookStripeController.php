@@ -161,6 +161,13 @@ class WebhookStripeController extends AbstractController
                     }
                 }
                 break;
+            case 'customer.subscription.deleted':
+                // handle subscription cancelled automatically based
+                // upon your subscription settings. Or if the user
+                // cancels it.
+                return new Response(Response::HTTP_OK);
+                break;
+
             default:
                 throw new \Exception('Unexpected webhook type form Stripe! ' . $stripeEvent->type);
         }

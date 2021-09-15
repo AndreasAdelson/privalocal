@@ -329,7 +329,9 @@
     "cancel_subscription": "Annulez le renouvellement de l'abonnement",
     "mandate_acceptance": "En fournissant vos informations de paiement et en confirmant ce paiement, vous autorisez Sakabay et Stripe, notre prestataire de services de paiement, à envoyer des instructions à votre banque pour débiter votre compte et votre banque à débiter votre compte conformément à ces instructions. Dans le cadre de vos droits, vous avez droit à un remboursement de la part de votre banque, conformément aux conditions de votre contrat avec votre banque. Le remboursement doit être demandé dans un délai de 8 semaines à compter de la date à laquelle votre compte a été débité. Vos droits sont expliqués dans une déclaration que vous pouvez obtenir auprès de votre banque. Vous acceptez de recevoir des notifications pour les futurs débits jusqu'à 2 jours avant qu'ils n'aient lieu.",
     "assign_default": "Définir comme méthode de paiement par défaut",
-    "default_payment_method": "Votre méthode de paiement par défaut :"
+    "default_payment_method": "Votre méthode de paiement par défaut :",
+    "choose_payment_method": "Choisissez votre moyen de paiement :"
+
   },
   "sous_category": {
     "title": "Liste des sous-catégories",

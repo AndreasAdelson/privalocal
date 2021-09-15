@@ -177,8 +177,6 @@ final class CompanySubscriptionController extends AbstractFOSRestController
                 $this->notificationFactory->createCompanySubscription([$user], $ressourceLocation, $companySubscription);
             }
         }
-
-
         $ressourceLocation = $this->generateUrl('dashboard');
 
         return View::create([], Response::HTTP_CREATED, ['Location' => $ressourceLocation]);
@@ -204,7 +202,6 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         } catch (Exception $e) {
             return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
         return View::create($setupIntent->client_secret, Response::HTTP_OK);
     }
 
@@ -231,7 +228,7 @@ final class CompanySubscriptionController extends AbstractFOSRestController
                 'currency' => 'eur',
                 'payment_method_types' => ['card'],
                 'customer' => $customer['id'],
-                'setup_future_usage' => 'on_session'
+                'setup_future_usage' => 'off_session'
             ]);
         } catch (Exception $e) {
             return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -423,6 +420,8 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         $paymentMethodId = $request->request->get('stripeId');
         $subscriptionName = $request->request->get('subscriptionName');
         $request->request->remove('subscriptionName');
+        $type = $request->request->get('type');
+        $request->request->remove('type');
         $company = $this->companyService->getCompany($companyId);
         $stripe = new StripeClient($this->getParameter('secret_key'));
         $customer = $this->getStripeCustomer($company, $stripe);
@@ -440,15 +439,21 @@ final class CompanySubscriptionController extends AbstractFOSRestController
             //Unset default older paymentMethod
             $oldPaymentMethod = $this->paymentMethodService->getDefaultPaymentMethod($companyId);
             $oldPaymentMethod->setDefaultMethod(false);
-            $stripe->paymentMethods->detach($oldPaymentMethod->getStripeId());
             $this->entityManager->persist($oldPaymentMethod);
 
             // SetPaymentMethod For company
             $paymentMethodRetrieved = $stripe->paymentMethods->retrieve($paymentMethodId);
+            dump($paymentMethodRetrieved);
             $paymentMethod = new PaymentMethod();
-            $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
-            $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
-            $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
+            if ($type === 'iban') {
+                $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
+                $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
+                $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
+            } else if ($type === 'card') {
+                $request->request->set('last4', $paymentMethodRetrieved['card']['last4']);
+                $request->request->set('fingerprint', $paymentMethodRetrieved['card']['fingerprint']);
+                $request->request->set('country', $paymentMethodRetrieved['card']['country']);
+            }
             $paymentMethod->setDefaultMethod(true);
             $formOptions = ['translator' => $this->translator];
             $form = $this->createForm(PaymentMethodType::class, $paymentMethod, $formOptions);

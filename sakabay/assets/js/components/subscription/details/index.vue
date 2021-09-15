@@ -80,12 +80,31 @@
                     class="row"
                   >
                     <div class="col-12">
-                      <div class="card">
+                      <span>{{ $t('subscription.choose_payment_method') }}</span>
+                      <div class="row navigation-menu card-skb2">
+                        <div class="col-3 mx-auto">
+                          <button
+                            :class="cardActive ? 'navigation-link-active' : 'navigation-link'"
+                            @click="activeCard"
+                          >
+                            CARTE
+                          </button>
+                          <button
+                            :class="ibanActive ? 'navigation-link-active' : 'navigation-link'"
+                            @click="activeIban"
+                          >
+                            IBAN
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="card"
+                      >
                         <form
                           id="payment-form"
-                          class="row"
+                          class="row my-4"
                         >
-                          <div class="col-12">
+                          <div class="col-6 mx-auto">
                             <div
                               v-show="ibanActive"
                               class="form-group"
@@ -160,14 +179,17 @@
                             </div>
                           </div>
                         </form>
-                        <div class="row mb-2">
+                        <div
+                          v-if="ibanActive || cardActive"
+                          class="row mb-2"
+                        >
                           <div class="col-4 mx-auto">
                             <button
                               :data-secret="clientSetupSecret"
                               type="submit"
-                              :class="!isIbanCompleted ? 'button_skb_yellow_disabled' : 'button_skb_yellow'"
+                              :class="!isIbanCompleted && !isCardCompleted? 'button_skb_yellow_disabled' : 'button_skb_yellow'"
                               class="btn"
-                              :disabled="!isIbanCompleted"
+                              :disabled="!isIbanCompleted && !isCardCompleted"
                               @click="assignNewDefaultPayment()"
                             >
                               {{ $t('subscription.assign_default') }}
@@ -180,6 +202,7 @@
                 </div>
               </div>
               <div v-else>
+                <span>{{ $t('subscription.choose_payment_method') }}</span>
                 <div class="row navigation-menu card-skb2">
                   <div class="col-3 mx-auto">
                     <button
@@ -624,7 +647,6 @@
           else if (this.cardActive) {
             this.createDefaultPaymentAndSubscribe(response, isOffer, 'card');
           }
-
         }).catch(e => {
           this.$handleError(e);
           this.loading = false;
@@ -790,25 +812,37 @@
       },
       editDefaultPayment() {
         this.edit = !this.edit;
-        if (this.edit) {
-          this.$nextTick(() => {
-            this.setIbanInput();
-          });
-        }
       },
       assignNewDefaultPayment() {
         this.loading = true;
-        this.stripe.createPaymentMethod({
-          type: 'sepa_debit',
-          sepa_debit: this.iban,
-          billing_details: {
-            name: this.companySelected.name,
-            email: this.companySelected.email,
-          },
-        }).then(response => {
-          this.paymentMethodForm.stripeId = response.paymentMethod.id;
+        let promises = [];
+        if(this.ibanActive) {
+          promises.push(this.stripe.createPaymentMethod({
+            type: 'sepa_debit',
+            sepa_debit: this.iban,
+            billing_details: {
+              name: this.companySelected.name,
+              email: this.companySelected.email,
+            },
+          }));
+          this.paymentMethodForm.type = 'iban';
+        } else if (this.cardActive) {
+          promises.push(this.stripe.createPaymentMethod({
+            type: 'card',
+            card: this.card,
+            billing_details: {
+              name: this.companySelected.name,
+              email: this.companySelected.email,
+            },
+          }));
+          this.paymentMethodForm.type = 'card';
+        }
+        Promise.all(promises).then(response => {
+          console.log(response);
+          this.paymentMethodForm.stripeId = response[0].paymentMethod.id;
           this.paymentMethodForm.company = this.companySelected.id;
           this.paymentMethodForm.subscriptionName = this.subscriptionName;
+          this.paymentMethodForm._token = this.token;
           let formData = this.$getFormFieldsData(this.paymentMethodForm);
           axios.post('/api/update-payment-method', formData)
             .then(result => {
@@ -834,21 +868,25 @@
         this.ibanActive = true;
         this.cardActive = false;
         this.errorMessage = null;
+        this.isCardCompleted = false;
         this.setIbanInput();
       },
       activeCard() {
         this.ibanActive = false;
         this.cardActive = true;
         this.errorMessage = null;
+        this.isIbanCompleted = false;
         this.setCardInput();
       },
 
       createDefaultPaymentAndSubscribe(response, isOffer, paymentType) {
         this.loading = true;
         if(this.ibanActive) {
+          console.log(response[0].setupIntent);
           this.paymentMethodForm.stripeId = response[0].setupIntent.payment_method;
 
         } else if(this.cardActive) {
+          console.log(response[0].paymentIntent);
           this.paymentMethodForm.stripeId = response[0].paymentIntent.payment_method;
         }
 
@@ -874,6 +912,7 @@
             this.formFields.isTrial = false;
             this.setSubscription();
           }).catch(e => {
+            this.loading = false;
             if (e.response && e.response.status && e.response.status === 400) {
               if (e.response.headers['x-message']) {
                 this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
@@ -886,7 +925,6 @@
             } else {
               this.$handleError(e);
             }
-            this.loading = false;
           });
       }
     }

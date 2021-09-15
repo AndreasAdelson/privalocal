@@ -329,7 +329,8 @@
     "cancel_subscription": "Cancel subscription renewal",
     "mandate_acceptance": "By providing your payment information and confirming such payment, you authorize Sakabay and Stripe, our payment service provider, to send instructions to your bank to debit your account and your bank to debit your account in accordance with such instructions. As part of your rights, you are entitled to a refund from your bank in accordance with the terms of your contract with your bank. The refund must be requested within 8 weeks from the date your account was debited. Your rights are explained in a statement that you can obtain from your bank. You agree to receive notifications of future debits up to 2 days before they occur.",
     "assign_default": "Set as default method payment",
-    "default_payment_method": "Your default payment method :"
+    "default_payment_method": "Your default payment method :",
+    "choose_payment_method": "Choose your payment method :"
   },
   "sous_category": {
     "title": "List of a subcategories",

@@ -207,39 +207,24 @@ final class CompanySubscriptionController extends AbstractFOSRestController
 
     /**
      * @Rest\View(serializerGroups={"api_company_subscriptions"})
-     * @Rest\Get("intent/{companyId}")
-     * @QueryParam(name="price_id",
-     *             default="",
-     *             description="stripe id du prix de l'abonnement"
-     * )
+     * @Rest\Get("stripe-customer/{companyId}")
+     *
      *
      * @return View
      */
-    public function getStripeIntentByCompany(int $companyId, ParamFetcher $paramFetcher): View
+    public function getStripeCustomerByCompanyId(int $companyId): View
     {
         $company = $this->companyService->getCompany($companyId);
         $stripe = new StripeClient($this->getParameter('secret_key'));
         $customer = $this->getStripeCustomer($company, $stripe);
-        $stripePriceId = $paramFetcher->get('price_id');
-        $price = $this->subscriptionService->getSubscriptionByStripeId($stripePriceId)->getPrice();
-        try {
-            $intent = $stripe->paymentIntents->create([
-                'amount' => $price * 100,
-                'currency' => 'eur',
-                'payment_method_types' => ['card'],
-                'customer' => $customer['id'],
-                'setup_future_usage' => 'off_session'
-            ]);
-        } catch (Exception $e) {
-            return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
 
-        return View::create($intent->client_secret, Response::HTTP_OK);
+
+        return View::create($customer['id'], Response::HTTP_OK);
     }
 
     /**
      * @Rest\View()
-     * @Rest\Post("/default-payment")
+     * @Rest\Post("/paymentAttempt")
      * @param Request $request
      *
      * @return View
@@ -252,50 +237,29 @@ final class CompanySubscriptionController extends AbstractFOSRestController
             ]);
         }
         $companyId = $request->request->get('company');
-        $stripeId = $request->request->get('stripeId');
+        $paymentMethodId = $request->request->get('stripeId');
         $subscriptionId = $request->request->get('subscription');
         $request->request->remove('subscription');
         $dtStart = $request->request->get('dtStart');
         $request->request->remove('dtStart');
-        $type = $request->request->get('type');
-        $request->request->remove('type');
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
         $priceStripeId = $subscription->getStripeId();
         $company = $this->companyService->getCompany($companyId);
         $stripe = new StripeClient($this->getParameter('secret_key'));
         $customer = $this->getStripeCustomer($company, $stripe);
         try {
+            $stripe->paymentMethods->attach(
+                $paymentMethodId,
+                ['customer' => $customer['id']]
+            );
             $stripe->customers->update(
                 $customer['id'],
                 [
                     'invoice_settings' => [
-                        'default_payment_method' => $stripeId
+                        'default_payment_method' => $paymentMethodId
                     ]
                 ]
             );
-            // SetPaymentMethod For company
-            $paymentMethodRetrieved = $stripe->paymentMethods->retrieve($stripeId);
-            $paymentMethod = new PaymentMethod();
-            if ($type === 'iban') {
-                $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
-                $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
-                $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
-            } else if ($type === 'card') {
-                $request->request->set('last4', $paymentMethodRetrieved['card']['last4']);
-                $request->request->set('fingerprint', $paymentMethodRetrieved['card']['fingerprint']);
-                $request->request->set('country', $paymentMethodRetrieved['card']['country']);
-            }
-
-            $paymentMethod->setDefaultMethod(true);
-            $formOptions = ['translator' => $this->translator];
-            $form = $this->createForm(PaymentMethodType::class, $paymentMethod, $formOptions);
-            $form->submit($request->request->all());
-            if (!$form->isValid()) {
-                return $form;
-            }
-
-            $this->entityManager->persist($paymentMethod);
-            $this->entityManager->flush();
             $subscription = $this->createStripeSubscription($stripe, $customer, $priceStripeId, $dtStart);
         } catch (Exception $e) {
             return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -304,6 +268,74 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         return View::create($subscription, Response::HTTP_CREATED);
     }
 
+    /**
+     * @Rest\View()
+     * @Rest\Post("/set-default-method")
+     * @param Request $request
+     *
+     * @return View
+     */
+    public function setDefaultMethod(Request $request)
+    {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
+        $paymentMethodId = $request->request->get('stripeId');
+        $type = $request->request->get('type');
+        $request->request->remove('type');
+        $request->request->remove('subscription');
+        $stripe = new StripeClient($this->getParameter('secret_key'));
+        // SetPaymentMethod For company
+        $paymentMethodRetrieved = $stripe->paymentMethods->retrieve($paymentMethodId);
+        $paymentMethod = new PaymentMethod();
+        if ($type === 'iban') {
+            $request->request->set('last4', $paymentMethodRetrieved['sepa_debit']['last4']);
+            $request->request->set('fingerprint', $paymentMethodRetrieved['sepa_debit']['fingerprint']);
+            $request->request->set('country', $paymentMethodRetrieved['sepa_debit']['country']);
+        } else if ($type === 'card') {
+            $request->request->set('last4', $paymentMethodRetrieved['card']['last4']);
+            $request->request->set('fingerprint', $paymentMethodRetrieved['card']['fingerprint']);
+            $request->request->set('country', $paymentMethodRetrieved['card']['country']);
+        }
+        $paymentMethod->setDefaultMethod(true);
+        $formOptions = ['translator' => $this->translator];
+        $form = $this->createForm(PaymentMethodType::class, $paymentMethod, $formOptions);
+        $form->submit($request->request->all());
+        if (!$form->isValid()) {
+            return $form;
+        }
+        $this->entityManager->persist($paymentMethod);
+        $this->entityManager->flush();
+        $ressourceLocation = $this->generateUrl('dashboard');
+        return View::create([], Response::HTTP_CREATED, ['Location' => $ressourceLocation]);
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Post("/unset-default-method")
+     * @param Request $request
+     *
+     * @return View
+     */
+    public function unsetPaymentMethod(Request $request)
+    {
+        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
+            return View::create([], Response::HTTP_BAD_REQUEST, [
+                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
+            ]);
+        }
+        $paymentMethodId = $request->request->get('stripeId');
+        $stripe = new StripeClient($this->getParameter('secret_key'));
+        try {
+            $stripe->paymentMethods->detach($paymentMethodId);
+        } catch (Exception $e) {
+            return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return View::create([], Response::HTTP_CREATED);
+    }
     /**
      * @Rest\View()
      * @Rest\Post("/payment")
@@ -476,15 +508,19 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         $companyStripeId = $company->getStripeId();
         $customer = null;
         if (empty($companyStripeId)) {
-            $customer = $stripe->customers->create([
-                'email' => $company->getEmail(),
-                'name' => $company->getName(),
-                'preferred_locales' => ['fr-FR']
-            ]);
-            $company->setStripeId($customer['id']);
+            try {
+                $customer = $stripe->customers->create([
+                    'email' => $company->getEmail(),
+                    'name' => $company->getName(),
+                    'preferred_locales' => ['fr-FR']
+                ]);
+                $company->setStripeId($customer['id']);
 
-            $this->entityManager->persist($company);
-            $this->entityManager->flush();
+                $this->entityManager->persist($company);
+                $this->entityManager->flush();
+            } catch (Exception $e) {
+                return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         } else {
             $customer = $stripe->customers->retrieve($companyStripeId);
         }

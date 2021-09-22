@@ -116,71 +116,7 @@ final class CompanySubscriptionController extends AbstractFOSRestController
         return View::create([], Response::HTTP_NO_CONTENT, ['Location' => $ressourceLocation]);
     }
 
-    /**
-     * @Rest\View()
-     * @Rest\Post("/subscribes")
-     * @param Request $request
-     *
-     * @return View
-     */
-    public function createCompanySubscription(Request $request)
-    {
-        if (!$this->isCsrfTokenValid('companySubscription', $request->request->get('_token'))) {
-            return View::create([], Response::HTTP_BAD_REQUEST, [
-                'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
-            ]);
-        }
-        $isTrial = $request->request->get('isTrial');
-        $request->request->remove('isTrial');
-        $companyId = $request->request->get('company');
 
-        $activeCompanySubscription = $this->companySubscriptionService->getActiveSubscription($companyId, false, true);
-        if (empty($activeCompanySubscription)) {
-            $activeCompanySubscription = $this->companySubscriptionService->getActiveSubscription($companyId, false, false);
-        }
-        if (!empty($activeCompanySubscription) && $activeCompanySubscription->getSubscriptionStatus()->getCode() != SubscriptionStatusRepository::OFFER_CODE) {
-            $subscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatusByCode(SubscriptionStatusRepository::PENDING_CODE);
-            $activeCompanySubscription->setSubscriptionStatus($subscriptionStatus);
-            $activeCompanySubscription->setStripeId($request->request->get('stripeId'));
-            $this->entityManager->persist($activeCompanySubscription);
-            $this->entityManager->flush();
-            if ($isTrial == false) {
-                $user = $activeCompanySubscription->getCompany()->getUtilisateur();
-                $ressourceLocation = $this->generateUrl('subscription_details_subscriptions', ['slug' => strtolower($activeCompanySubscription->getSubscription()->getName())]);
-                $this->notificationFactory->createCompanySubscription([$user], $ressourceLocation, $activeCompanySubscription);
-            }
-        } else {
-            $companySubscription = new CompanySubscription();
-            $subscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatusByCode(SubscriptionStatusRepository::PENDING_CODE);
-            $request->request->set('subscriptionStatus', $subscriptionStatus->getId());
-            $formOptions = ['translator' => $this->translator];
-            $form = $this->createForm(CompanySubscriptionType::class, $companySubscription, $formOptions);
-            $form->submit($request->request->all());
-            if (!$form->isValid()) {
-                return $form;
-            }
-            $this->entityManager->persist($companySubscription);
-            $this->entityManager->flush();
-
-            $email = $companySubscription->getCompany()->getEmail();
-            $subject = $this->translator->trans('email_pending_payment_subject');
-            $bodyMessage = sprintf(
-                $this->translator->trans('email_pending_payment_message'),
-                $companySubscription->getCompany()->getName(),
-                $companySubscription->getSubscription()->getName(),
-                $companySubscription->getSubscription()->getName()
-            );
-            $this->sendMail($email, $subject, $bodyMessage);
-            if ($isTrial == false) {
-                $user = $companySubscription->getCompany()->getUtilisateur();
-                $ressourceLocation = $this->generateUrl('subscription_details_subscriptions', ['slug' => strtolower($companySubscription->getSubscription()->getName())]);
-                $this->notificationFactory->createCompanySubscription([$user], $ressourceLocation, $companySubscription);
-            }
-        }
-        $ressourceLocation = $this->generateUrl('dashboard');
-
-        return View::create([], Response::HTTP_CREATED, ['Location' => $ressourceLocation]);
-    }
 
 
     /**
@@ -236,10 +172,12 @@ final class CompanySubscriptionController extends AbstractFOSRestController
                 'X-Message' => rawurlencode($this->translator->trans('error_csrf_token')),
             ]);
         }
+        $isTrial = $request->request->get('isTrial');
+        $request->request->remove('isTrial');
         $companyId = $request->request->get('company');
-        $paymentMethodId = $request->request->get('stripeId');
+        $paymentMethodId = $request->request->get('paymentMethodStripeId');
+        $request->request->remove('paymentMethodStripeId');
         $subscriptionId = $request->request->get('subscription');
-        $request->request->remove('subscription');
         $dtStart = $request->request->get('dtStart');
         $request->request->remove('dtStart');
         $subscription = $this->subscriptionService->getSubscription($subscriptionId);
@@ -261,6 +199,7 @@ final class CompanySubscriptionController extends AbstractFOSRestController
                 ]
             );
             $subscription = $this->createStripeSubscription($stripe, $customer, $priceStripeId, $dtStart);
+            $companySubscription = $this->createOrUpdateCompanySubscription($request, $isTrial, $subscription);
         } catch (Exception $e) {
             return View::create($e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -572,5 +511,65 @@ final class CompanySubscriptionController extends AbstractFOSRestController
             ]);
         }
         return $subscription;
+    }
+
+    private function createOrUpdateCompanySubscription(Request $request, $isTrial, $subscription)
+    {
+        $companyId = $request->request->get('company');
+
+        $activeCompanySubscription = $this->companySubscriptionService->getActiveSubscription($companyId, false, true);
+        if (empty($activeCompanySubscription)) {
+            $activeCompanySubscription = $this->companySubscriptionService->getActiveSubscription($companyId, false, false);
+        }
+        if (!empty($activeCompanySubscription) && $activeCompanySubscription->getSubscriptionStatus()->getCode() != SubscriptionStatusRepository::OFFER_CODE) {
+            $subscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatusByCode(SubscriptionStatusRepository::PENDING_CODE);
+            $activeCompanySubscription->setSubscriptionStatus($subscriptionStatus);
+            $activeCompanySubscription->setStripeId($request->request->get('stripeId'));
+            $this->entityManager->persist($activeCompanySubscription);
+            $this->entityManager->flush();
+            if ($isTrial == false) {
+                $user = $activeCompanySubscription->getCompany()->getUtilisateur();
+                $ressourceLocation = $this->generateUrl('subscription_details_subscriptions', ['slug' => strtolower($activeCompanySubscription->getSubscription()->getName())]);
+                $this->notificationFactory->createCompanySubscription([$user], $ressourceLocation, $activeCompanySubscription);
+            }
+        } else {
+            $companySubscription = new CompanySubscription();
+            $subscriptionStatus = $this->subscriptionStatusService->getSubscriptionStatusByCode(SubscriptionStatusRepository::PENDING_CODE);
+            $request->request->set('subscriptionStatus', $subscriptionStatus->getId());
+            $request->request->set('stripeId', $subscription['id']);
+            $dtDebut = $request->request->get('dtDebut');
+            $dtFin = $request->request->get('dtFin');
+            if (empty($dtDebut) && empty($dtFin)) {
+                $dtDebutFormat = new DateTime();
+                $dtFinFormat = new DateTime();
+                $dtDebutFormat->setTimestamp($subscription['current_period_start'])->format('Y-m-d H:i:s');
+                $dtFinFormat->setTimestamp($subscription['current_period_end'])->format('Y-m-d H:i:s');
+                $request->request->set('dtDebut', $dtDebutFormat);
+                $request->request->set('dtFin', $dtFinFormat);
+            }
+            $formOptions = ['translator' => $this->translator];
+            $form = $this->createForm(CompanySubscriptionType::class, $companySubscription, $formOptions);
+            $form->submit($request->request->all());
+            if (!$form->isValid()) {
+                return $form;
+            }
+            $this->entityManager->persist($companySubscription);
+            $this->entityManager->flush();
+
+            $email = $companySubscription->getCompany()->getEmail();
+            $subject = $this->translator->trans('email_pending_payment_subject');
+            $bodyMessage = sprintf(
+                $this->translator->trans('email_pending_payment_message'),
+                $companySubscription->getCompany()->getName(),
+                $companySubscription->getSubscription()->getName(),
+                $companySubscription->getSubscription()->getName()
+            );
+            $this->sendMail($email, $subject, $bodyMessage);
+            if ($isTrial == false) {
+                $user = $companySubscription->getCompany()->getUtilisateur();
+                $ressourceLocation = $this->generateUrl('subscription_details_subscriptions', ['slug' => strtolower($companySubscription->getSubscription()->getName())]);
+                $this->notificationFactory->createCompanySubscription([$user], $ressourceLocation, $companySubscription);
+            }
+        }
     }
 }

@@ -441,7 +441,10 @@
           subscription: new Object(),
           stripeId: null,
           isTrial: null,
-          _token: null
+          _token: null,
+          paymentMethodStripeId: null,
+          fingerprint: null,
+          type: null
         },
         formErrors: {
           dtDebut: [],
@@ -594,7 +597,6 @@
             this.loading = false;
           });
       },
-
       getStripeCustomer() {
         this.loading = true;
         return axios.get('/api/stripe-customer/' + this.companySelected.id)
@@ -605,72 +607,39 @@
             this.loading = false;
           });
       },
-
-      cancelSubscription() {
-        this.loading = true;
-        axios.post('/api/cancel-subscription', {
-          company: this.companySelected.id,
-          _token: this.token
-        })
-          .then(response => {
-            window.location.assign(response.headers.location);
-          }).catch(e => {
-            if (e.response && e.response.status && e.response.status === 400) {
-              if (e.response.headers['x-message']) {
-                this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
-              } else  {
-                this.$handleFormError(e.response.data);
-              }
-            }
-            else if (e.response && e.response.status && e.response.status === 500) {
-              this.errorMessage = decodeURIComponent(e.response.data.message);
-            } else {
-              this.$handleError(e);
-            }
-            this.loading = false;
-          });
+      activeIban() {
+        this.ibanActive = true;
+        this.cardActive = false;
+        this.errorMessage = null;
+        this.isCardCompleted = false;
+        this.setIbanInput();
       },
-      subscribeWithDefaultPaymentMethod() {
+      activeCard() {
+        this.ibanActive = false;
+        this.cardActive = true;
+        this.errorMessage = null;
+        this.isIbanCompleted = false;
+        this.setCardInput();
+      },
+      setPaymentMethod() {
         this.loading = true;
-        this.stripe.confirmSepaDebitSetup(
-          this.clientSetupSecret,
-          {
-            payment_method: this.defaultPaymentMethod.stripe_id
-          }).then(response => {
-          this.paymentMethodForm.company = this.companySelected.id;
-          // Revoir condition pour dtStart ici
-          if (this.activeCompanySubscription && moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY HH:mm:ss').isAfter()) {
-            this.paymentMethodForm.dtStart = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:m:ss').format('X');
-          }
-          this.paymentMethodForm.subscription = _.cloneDeep(this.subscription);
-          let formData = this.$getFormFieldsData(this.paymentMethodForm);
-          axios.post('/api/payment', formData)
-            .then(result => {
-              this.formFields.dtFin = moment(result.data._values.current_period_end * 1000).format('YYYY/MM/DD H:m:s');
-              this.formFields.dtDebut = moment(result.data._values.current_period_start * 1000).format('YYYY/MM/DD H:m:s');
-              this.formFields.stripeId = result.data._values.id;
-              if (this.activeCompanySubscription && !this.activeCompanySubscription.stripe_id) {
-                this.formFields.isTrial = true;
-              } else {
-                this.formFields.isTrial = false;
-              }
-              this.setSubscription();
-            }).catch(e => {
-              if (e.response && e.response.status && e.response.status === 400) {
-                if (e.response.headers['x-message']) {
-                  this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
-                } else  {
-                  this.$handleFormError(e.response.data);
-                }
-              }
-              else if (e.response && e.response.status && e.response.status === 500) {
-                this.errorMessage = decodeURIComponent(e.response.data.message);
-              } else {
-                this.$handleError(e);
-              }
-              this.loading = false;
-            });
-        });
+        console.log(this.paymentMethodForm);
+        console.log(this.formFields);
+        let formData = this.$getFormFieldsData(this.formFields);
+        return axios.post('/api/set-default-method', formData)
+          .then((response => {
+            this.location = response.headers.location;
+          }));
+      },
+      unsetPaymentMethod() {
+        this.loading = true;
+        let formData = this.$getFormFieldsData(this.paymentMethodForm);
+        return axios.post('/api/unset-default-method', formData);
+      },
+      setSubscription() {
+        this.formFields._token = _.cloneDeep(this.token);
+        let formData = this.$getFormFieldsData(this.formFields);
+        return axios.post(this.API_URL, formData);
       },
       setIbanInput() {
         var style = {
@@ -767,6 +736,187 @@
       editDefaultPayment() {
         this.edit = !this.edit;
       },
+
+      async subscribe(isOffer) {
+        this.loading = true;
+        let promises = [];
+        if(this.ibanActive) {
+          await this.getStripeSetupIntent();
+          promises.push(this.stripe.confirmSepaDebitSetup(
+            this.clientSetupSecret,
+            {
+              payment_method: {
+                sepa_debit: this.iban,
+                billing_details: {
+                  name: this.companySelected.name,
+                  email: this.companySelected.email,
+                },
+              },
+            }
+          ));
+        } else if (this.cardActive) {
+          await this.getStripeCustomer();
+          promises.push(this.stripe
+            .createPaymentMethod({
+              type: 'card',
+              card: this.card,
+              billing_details: {
+                name: this.companySelected.name
+              }
+            }));
+        }
+        Promise.all(promises).then(response => {
+          if (this.ibanActive) {
+            this.createDefaultPaymentAndSubscribe(response, isOffer, 'iban');
+          }
+          else if (this.cardActive) {
+            this.createDefaultPaymentAndSubscribe(response, isOffer, 'card');
+          }
+        }).catch(e => {
+          this.$handleError(e);
+          this.loading = false;
+        });
+      },
+
+      createDefaultPaymentAndSubscribe(response, isOffer, paymentType) {
+        this.loading = true;
+        if(this.ibanActive) {
+          this.formFields.paymentMethodStripeId = response[0].setupIntent.payment_method;
+
+        } else if(this.cardActive) {
+          this.formFields.paymentMethodStripeId = response[0].paymentMethod.id;
+        }
+        this.formFields.subscription = _.cloneDeep(this.subscription);
+        //Create a trial for those who subscribed when they are still in offer subscription.
+        if (isOffer && this.activeCompanySubscription) {
+          this.formFields.dtStart = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').format('X');
+          this.formFields.dtDebut = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').format('YYYY/MM/DD H:m:s');
+          this.formFields.dtFin = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').add(1,'M').format('YYYY/MM/DD H:m:ss');
+        }
+        this.formFields._token = _.cloneDeep(this.token);
+        this.formFields.type = paymentType;
+        let formData = this.$getFormFieldsData(this.formFields);
+        axios.post('/api/paymentAttempt', formData)
+          .then((result) => {
+            if (result.error) {
+              // The card had an error when trying to attach it to a customer.
+              throw result;
+            }
+            return result;
+          })
+          .then((result) => {
+            return {
+              paymentMethodId:  this.paymentMethodForm.stripeId,
+              priceId: this.subscription.stripe_id,
+              subscription: result.data,
+            };
+          })
+          .then(this.handlePaymentThatRequiresCustomerAction)
+          .then(async() => {return await this.setPaymentMethod();})
+          .catch(e => {
+            this.loading = false;
+            if (e.response && e.response.status && e.response.status === 400) {
+              if (e.response.headers['x-message']) {
+                this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
+              } else  {
+                this.$handleFormError(e.response.data);
+              }
+            }
+            else if (e.response && e.response.status && e.response.status === 500) {
+              this.errorMessage = decodeURIComponent(e.response.data.message);
+            } else if (e.error && e.error.code && e.error.message) {
+              this.errorMessage = e.error.message;
+              this.unsetPaymentMethod();
+            } else {
+              this.$handleError(e);
+            }
+          }).then(() => {
+            // window.location.assign(this.location);
+            this.loading = false;
+          });
+      },
+      handlePaymentThatRequiresCustomerAction({subscription, invoice, priceId, paymentMethodId, isRetry}) {
+        if (subscription && subscription.status === 'active') {
+          // Subscription is active, no customer actions required.
+          return { subscription, priceId, paymentMethodId };
+        }
+        // If it's a first payment attempt, the payment intent is on the subscription latest invoice.
+        // If it's a retry, the payment intent will be on the invoice itself.
+        console.log(subscription);
+        let paymentIntent = invoice ? invoice.payment_intent : subscription._values.latest_invoice._values.payment_intent._values;
+
+        if (
+          paymentIntent.status === 'requires_action' ||
+          (isRetry === true && paymentIntent.status === 'requires_payment_method')
+        ) {
+          return this.stripe
+            .confirmCardPayment(paymentIntent.client_secret, {
+              payment_method: paymentMethodId,
+            })
+            .then((result) => {
+              if (result.error) {
+                // Display error message in UI.
+                // The card was declined (i.e. insufficient funds, card has expired, etc).
+                throw result;
+              } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                  return {
+                    priceId: priceId,
+                    subscription: subscription,
+                    invoice: invoice,
+                    paymentMethodId: paymentMethodId,
+                  };
+                }
+              }
+            });
+        } else {
+          // No customer action needed.
+          return { subscription, priceId, paymentMethodId };
+        }
+      },
+      subscribeWithDefaultPaymentMethod() {
+        this.loading = true;
+        this.stripe.confirmSepaDebitSetup(
+          this.clientSetupSecret,
+          {
+            payment_method: this.defaultPaymentMethod.stripe_id
+          }).then(response => {
+          this.paymentMethodForm.company = this.companySelected.id;
+          // Revoir condition pour dtStart ici
+          if (this.activeCompanySubscription && moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY HH:mm:ss').isAfter()) {
+            this.paymentMethodForm.dtStart = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:m:ss').format('X');
+          }
+          this.paymentMethodForm.subscription = _.cloneDeep(this.subscription);
+          let formData = this.$getFormFieldsData(this.paymentMethodForm);
+          axios.post('/api/payment', formData)
+            .then(result => {
+              this.formFields.dtFin = moment(result.data._values.current_period_end * 1000).format('YYYY/MM/DD H:m:s');
+              this.formFields.dtDebut = moment(result.data._values.current_period_start * 1000).format('YYYY/MM/DD H:m:s');
+              this.formFields.stripeId = result.data._values.id;
+              if (this.activeCompanySubscription && !this.activeCompanySubscription.stripe_id) {
+                this.formFields.isTrial = true;
+              } else {
+                this.formFields.isTrial = false;
+              }
+              this.setSubscription();
+            }).catch(e => {
+              if (e.response && e.response.status && e.response.status === 400) {
+                if (e.response.headers['x-message']) {
+                  this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
+                } else  {
+                  this.$handleFormError(e.response.data);
+                }
+              }
+              else if (e.response && e.response.status && e.response.status === 500) {
+                this.errorMessage = decodeURIComponent(e.response.data.message);
+              } else {
+                this.$handleError(e);
+              }
+              this.loading = false;
+            });
+        });
+      },
+
       assignNewDefaultPayment() {
         this.loading = true;
         let promises = [];
@@ -817,111 +967,16 @@
             });
         });
       },
-      activeIban() {
-        this.ibanActive = true;
-        this.cardActive = false;
-        this.errorMessage = null;
-        this.isCardCompleted = false;
-        this.setIbanInput();
-      },
-      activeCard() {
-        this.ibanActive = false;
-        this.cardActive = true;
-        this.errorMessage = null;
-        this.isIbanCompleted = false;
-        this.setCardInput();
-      },
 
-      async subscribe(isOffer) {
+      cancelSubscription() {
         this.loading = true;
-        let promises = [];
-        if(this.ibanActive) {
-          await this.getStripeSetupIntent();
-          promises.push(this.stripe.confirmSepaDebitSetup(
-            this.clientSetupSecret,
-            {
-              payment_method: {
-                sepa_debit: this.iban,
-                billing_details: {
-                  name: this.companySelected.name,
-                  email: this.companySelected.email,
-                },
-              },
-            }
-          ));
-        } else if (this.cardActive) {
-          await this.getStripeCustomer();
-          promises.push(this.stripe
-            .createPaymentMethod({
-              type: 'card',
-              card: this.card,
-              billing_details: {
-                name: this.companySelected.name
-              }
-            }));
-        }
-        Promise.all(promises).then(response => {
-          if (this.ibanActive) {
-            this.createDefaultPaymentAndSubscribe(response, isOffer, 'iban');
-          }
-          else if (this.cardActive) {
-            this.createDefaultPaymentAndSubscribe(response, isOffer, 'card');
-          }
-        }).catch(e => {
-          this.$handleError(e);
-          this.loading = false;
-        });
-      },
-
-      createDefaultPaymentAndSubscribe(response, isOffer, paymentType) {
-        this.loading = true;
-        if(this.ibanActive) {
-          this.paymentMethodForm.stripeId = response[0].setupIntent.payment_method;
-
-        } else if(this.cardActive) {
-          this.paymentMethodForm.stripeId = response[0].paymentMethod.id;
-        }
-        this.paymentMethodForm.company = this.companySelected.id;
-        this.paymentMethodForm.subscription = _.cloneDeep(this.subscription);
-        //Create a trial for those who subscribed when they are still in offer subscription.
-        if (isOffer && this.activeCompanySubscription) {
-          this.paymentMethodForm.dtStart = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').format('X');
-        }
-        this.paymentMethodForm.type = paymentType;
-        this.paymentMethodForm._token = _.cloneDeep(this.token);
-        let formData = this.$getFormFieldsData(this.paymentMethodForm);
-        axios.post('/api/paymentAttempt', formData)
-          .then(result => {
-            if (isOffer && this.activeCompanySubscription) {
-              this.formFields.dtDebut = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').format('YYYY/MM/DD H:m:s');
-              this.formFields.dtFin = moment(this.activeCompanySubscription.dt_fin, 'DD/MM/YYYY H:mm:ss').add(1,'M').format('YYYY/MM/DD H:m:ss');
-            } else {
-              this.formFields.dtDebut = moment(result.data._values.current_period_start * 1000).format('YYYY/MM/DD H:m:ss');
-              this.formFields.dtFin = moment(result.data._values.current_period_end * 1000).format('YYYY/MM/DD H:m:ss');
-            }
-            this.formFields.stripeId = result.data._values.id;
-            this.formFields.isTrial = false;
-            return result.data._values;
-          })
-          .then((result) => {
-            if (result.error) {
-              // The card had an error when trying to attach it to a customer.
-              throw result;
-            }
-            return result;
-          })
-          .then((result) => {
-            return {
-              paymentMethodId:  this.paymentMethodForm.stripeId,
-              priceId: this.subscription.stripe_id,
-              subscription: result,
-            };
-          })
-          .then(this.handlePaymentThatRequiresCustomerAction)
-          .then(async() => {await this.setSubscription();})
-          .then(async() => {await this.setPaymentMethod();})
-          .catch(e => {
-            this.loading = false;
+        axios.post('/api/cancel-subscription', {
+          company: this.companySelected.id,
+          _token: this.token
+        })
+          .then(response => {
+            window.location.assign(response.headers.location);
+          }).catch(e => {
             if (e.response && e.response.status && e.response.status === 400) {
               if (e.response.headers['x-message']) {
                 this.errorMessage = decodeURIComponent(e.response.headers['x-message']);
@@ -931,73 +986,11 @@
             }
             else if (e.response && e.response.status && e.response.status === 500) {
               this.errorMessage = decodeURIComponent(e.response.data.message);
-            } else if (e.error && e.error.code && e.error.message) {
-              this.errorMessage = e.error.message;
-              this.unsetPaymentMethod();
             } else {
               this.$handleError(e);
             }
-          }).then(() => {
-            window.location.assign(this.location);
             this.loading = false;
           });
-      },
-      handlePaymentThatRequiresCustomerAction({subscription, invoice, priceId, paymentMethodId, isRetry}) {
-        if (subscription && subscription.status === 'active') {
-          // Subscription is active, no customer actions required.
-          return { subscription, priceId, paymentMethodId };
-        }
-        // If it's a first payment attempt, the payment intent is on the subscription latest invoice.
-        // If it's a retry, the payment intent will be on the invoice itself.
-        let paymentIntent = invoice ? invoice.payment_intent : subscription.latest_invoice._values.payment_intent._values;
-
-        if (
-          paymentIntent.status === 'requires_action' ||
-          (isRetry === true && paymentIntent.status === 'requires_payment_method')
-        ) {
-          return this.stripe
-            .confirmCardPayment(paymentIntent.client_secret, {
-              payment_method: paymentMethodId,
-            })
-            .then((result) => {
-              if (result.error) {
-                // Display error message in UI.
-                // The card was declined (i.e. insufficient funds, card has expired, etc).
-                throw result;
-              } else {
-                if (result.paymentIntent.status === 'succeeded') {
-                  return {
-                    priceId: priceId,
-                    subscription: subscription,
-                    invoice: invoice,
-                    paymentMethodId: paymentMethodId,
-                  };
-                }
-              }
-            });
-        } else {
-          // No customer action needed.
-          return { subscription, priceId, paymentMethodId };
-        }
-      },
-      setPaymentMethod() {
-        this.loading = true;
-        console.log(this.paymentMethodForm);
-        let formData = this.$getFormFieldsData(this.paymentMethodForm);
-        return axios.post('/api/set-default-method', formData)
-          .then((response => {
-            this.location = response.headers.location;
-          }));
-      },
-      unsetPaymentMethod() {
-        this.loading = true;
-        let formData = this.$getFormFieldsData(this.paymentMethodForm);
-        return axios.post('/api/unset-default-method', formData);
-      },
-      setSubscription() {
-        this.formFields._token = _.cloneDeep(this.token);
-        let formData = this.$getFormFieldsData(this.formFields);
-        return axios.post(this.API_URL, formData);
       },
     }
   };
